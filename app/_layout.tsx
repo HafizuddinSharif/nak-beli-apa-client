@@ -1,3 +1,4 @@
+import { COLORS } from "@/constants";
 import { Stack } from "expo-router";
 import { SafeAreaView, Text } from "react-native";
 

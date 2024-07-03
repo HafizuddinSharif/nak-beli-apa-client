@@ -1,13 +1,13 @@
 import { SIZES } from "@/constants";
 import { Text } from "react-native";
 
-const PageTitle = ({ title }: any) => {
+const PageSubHeading = ({ title }: any) => {
   return (
     <Text
       style={{
         marginBottom: 20,
         textAlign: "left",
-        fontSize: SIZES.xLarge,
+        fontSize: SIZES.large,
         fontWeight: 700,
       }}
     >
@@ -16,4 +16,4 @@ const PageTitle = ({ title }: any) => {
   );
 };
 
-export default PageTitle;
+export default PageSubHeading;

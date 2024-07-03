@@ -3,6 +3,8 @@ const COLORS = {
   secondary: "#F0D6B5", // peach-ish
   tertiary: "#FF7754",
 
+  orange: "#CB7202",
+
   gray: "#83829A",
   gray2: "#C1C0C8",
 
