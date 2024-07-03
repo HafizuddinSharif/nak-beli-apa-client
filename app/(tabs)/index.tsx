@@ -5,6 +5,8 @@ import React, { useState } from "react";
 import { FlatList, SafeAreaView, Text, TouchableOpacity, View } from "react-native";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import { SIZES } from "@/constants"
+import PageTitle from "@/components/common/PageTitle";
+import ChecklistItem from "@/components/checklist-page/ChecklistItem";
 
 export default function Index() {
 
@@ -45,7 +47,8 @@ export default function Index() {
     <SafeAreaView
     style={{
       flex: 1,
-      backgroundColor: "#FFF"
+      backgroundColor: "#FFF",
+      paddingHorizontal: 30
     }}>
       <Stack.Screen 
         options={{
@@ -54,20 +57,14 @@ export default function Index() {
           headerTitle: "",
         }}
       />
-      <Text style={{ marginBottom: 20, fontSize: SIZES.xLarge, fontWeight: 700}}>Senarai bahan untuk dibeli</Text>
+      {/* Page title */}
+      <PageTitle title="Senarai bahan untuk dibeli"/>
+
+      {/* List of checklist item */}
       <FlatList 
         data={groceryList}
         renderItem={({ item }) => (
-          <View
-            style= {{
-              flex: 1,
-              flexDirection: "row",
-              paddingBottom: 15,
-            }}
-          >
-            <BouncyCheckbox onPress={(isChecked: boolean) => handleToggle(item, isChecked)} isChecked={item.hasBought}/>
-            <Text>{`${item.quantity} ${item.unit} of ${item.item_name} `}</Text>
-          </View>
+          <ChecklistItem handleToggle={handleToggle} item={item} />
         )}
         keyExtractor={(item) => item.id.toString()}
       />

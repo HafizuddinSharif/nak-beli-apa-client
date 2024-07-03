@@ -1,3 +1,6 @@
+import PageTitle from "@/components/common/PageTitle";
+import SearchBar from "@/components/common/SearchBar";
+import MealItem from "@/components/meals-page/MealItem";
 import { COLORS, SIZES } from "@/constants";
 import { Ionicons } from "@expo/vector-icons";
 import { Stack } from "expo-router";
@@ -19,31 +22,27 @@ export default function Meals() {
     <SafeAreaView
     style={{
       flex: 1,
-      backgroundColor: "#FFF"
+      backgroundColor: "#FFF",
+      paddingHorizontal: 30
     }}>
       <Stack.Screen 
         options={{
           headerStyle: { backgroundColor: '#FFF'},
           headerShadowVisible: false,
-          headerTitle: "",
+          headerTitle: ""
         }}
       />
-      
-      <View style={{ justifyContent: "center", alignItems: "center"}}>
-      <Text style={{ width: "80%", marginVertical: 20, textAlign: "left", fontSize: SIZES.xLarge, fontWeight: 700}}>Lihat menu</Text>
-      
-      <View style={{ backgroundColor: COLORS.secondary, width: "80%", marginVertical: 20, padding: 10, flexDirection: "row", justifyContent: "space-between", borderRadius: 5 }}>
-        <TextInput style={{ textAlign: "left" }} value={searchInput} placeholder="Cari menu anda" placeholderTextColor={COLORS.black} onChangeText={handleChange} />
-        <TouchableOpacity>
-          <Ionicons name="search" size={20}/>
-        </TouchableOpacity>
-      </View>
+        {/* Page title */}
+        <PageTitle title="Lihat menu"/>
+
+        {/* Search bar */}
+        <SearchBar value={searchInput} handleChange={handleChange}/>
+        
+        {/* List of meals */}
         <FlatList 
           data={mealList}
           renderItem={({item}) => (
-            <View style={{ width: 150, height: 150, backgroundColor: COLORS.secondary, alignItems: "center", justifyContent: "center", borderRadius: 10}}>
-              <Text style={{ color: COLORS.black, fontWeight: "600", fontSize: SIZES.xLarge, textAlign: "center" }}>{item}</Text>
-            </View>
+            <MealItem title={item}/>
           )}
           numColumns={2}
           columnWrapperStyle={{ columnGap: 10}}
@@ -52,7 +51,6 @@ export default function Meals() {
             <View style={{ height: 10 }}></View>
           )}
         />
-      </View>
       
     </SafeAreaView>
   );
