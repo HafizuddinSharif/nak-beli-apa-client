@@ -1,70 +1,78 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import ScreenHeaderBtn from "@/components/header/header/ScreenHeaderBtn";
+import icons from "@/constants/icons";
+import { Stack, useRouter } from "expo-router";
+import React, { useState } from "react";
+import { FlatList, SafeAreaView, Text, TouchableOpacity, View } from "react-native";
+import BouncyCheckbox from "react-native-bouncy-checkbox";
+import { SIZES } from "@/constants"
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+export default function Index() {
 
-export default function HomeScreen() {
+  const router = useRouter();
+  const dummyGroceryList: GroceryItem[] = [
+    {id: 1, item_name: "Red Onion", quantity: 2, unit: "piece(s)", hasBought: false},
+    {id: 2, item_name: "Banana", quantity: 6, unit: "piece(s)", hasBought: false},
+    {id: 3, item_name: "Milk", quantity: 1, unit: "liter(s)", hasBought: false},
+    {id: 4, item_name: "Bread", quantity: 1, unit: "loaf", hasBought: false},
+    {id: 5, item_name: "Eggs", quantity: 12, unit: "piece(s)", hasBought: true},
+    {id: 6, item_name: "Chicken Breast", quantity: 1, unit: "kg", hasBought: false},
+    {id: 7, item_name: "Tomatoes", quantity: 5, unit: "piece(s)", hasBought: true},
+    {id: 8, item_name: "Cucumber", quantity: 2, unit: "piece(s)", hasBought: false},
+    {id: 9, item_name: "Cheddar Cheese", quantity: 200, unit: "gram(s)", hasBought: true},
+    {id: 10, item_name: "Olive Oil", quantity: 500, unit: "ml", hasBought: false}
+  ];
+  
+  const [groceryList, setGroceryList] = useState(dummyGroceryList);
+
+  const handlePress = () => {
+    router.push(`/add-new-meal`)
+  }
+
+  const handleToggle = (item: GroceryItem, isChecked: boolean) => {
+    item.hasBought = isChecked;
+    console.log(`Found this guy ${item.id} ${item.item_name}`)
+    setGroceryList(groceryList.map( g => {
+      if (g.id === item.id) {
+        return item
+      } else {
+        return g
+      }
+  }));
+  }
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({ ios: 'cmd + d', android: 'cmd + m' })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+
+    <SafeAreaView
+    style={{
+      flex: 1,
+      backgroundColor: "#FFF"
+    }}>
+      <Stack.Screen 
+        options={{
+          headerStyle: { backgroundColor: '#FFF'},
+          headerShadowVisible: false,
+          headerTitle: "",
+        }}
+      />
+      <Text style={{ marginBottom: 20, fontSize: SIZES.xLarge, fontWeight: 700}}>Senarai bahan untuk dibeli</Text>
+      <FlatList 
+        data={groceryList}
+        renderItem={({ item }) => (
+          <View
+            style= {{
+              flex: 1,
+              flexDirection: "row",
+              paddingBottom: 15,
+            }}
+          >
+            <BouncyCheckbox onPress={(isChecked: boolean) => handleToggle(item, isChecked)} isChecked={item.hasBought}/>
+            <Text>{`${item.quantity} ${item.unit} of ${item.item_name} `}</Text>
+          </View>
+        )}
+        keyExtractor={(item) => item.id.toString()}
+      />
+    </SafeAreaView>
+
+    
   );
 }
-
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});
