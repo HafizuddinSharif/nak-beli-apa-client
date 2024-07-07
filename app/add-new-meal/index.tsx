@@ -4,7 +4,6 @@ import PageSubHeading from "@/components/common/PageSubHeading";
 import PageTitle from "@/components/common/PageTitle";
 import { COLORS, TEXT } from "@/constants";
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
 import { Stack, useRouter } from "expo-router";
 import React, { useState } from "react";
 import {

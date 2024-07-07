@@ -28,6 +28,10 @@ export default function Meals() {
     setSearchInput(e);
   };
 
+  const goToViewMealPage = () => router.push("/view-meal");
+
+  const goToAddNewMealPage = () => router.push(`/add-new-meal`);
+
   return (
     <SafeAreaView
       style={{
@@ -42,7 +46,7 @@ export default function Meals() {
           headerShadowVisible: false,
           headerTitle: "",
           headerRight: () => (
-            <TouchableOpacity onPress={() => router.push(`/add-new-meal`)}>
+            <TouchableOpacity onPress={goToAddNewMealPage}>
               <Ionicons
                 size={35}
                 name="add"
@@ -62,12 +66,13 @@ export default function Meals() {
       {/* List of meals */}
       <FlatList
         data={mealList}
-        renderItem={({ item }) => (
-          <MealItem title={item} handlePress={addNewMeal} />
-        )}
+        renderItem={({ index, item }) => {
+          const { meal_name } = item as MealSelection;
+          return <MealItem title={meal_name} handlePress={goToViewMealPage} />;
+        }}
         numColumns={2}
         columnWrapperStyle={{ columnGap: 10 }}
-        keyExtractor={(item) => item}
+        keyExtractor={({ id }: MealSelection) => id}
         ItemSeparatorComponent={() => <View style={{ height: 10 }}></View>}
       />
     </SafeAreaView>
