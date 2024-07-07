@@ -1,12 +1,12 @@
 import { SIZES } from "@/constants";
 import { Text } from "react-native";
 
-const PageTitle = ({ title }: any) => {
+const PageTitle = ({ title, textAlign = "left" }: any) => {
   return (
     <Text
       style={{
         marginBottom: 20,
-        textAlign: "left",
+        textAlign: textAlign,
         fontSize: SIZES.xLarge,
         fontWeight: 700,
       }}

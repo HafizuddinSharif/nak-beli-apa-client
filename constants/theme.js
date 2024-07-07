@@ -3,6 +3,8 @@ const COLORS = {
   secondary: "#F0D6B5", // peach-ish
   tertiary: "#FF7754",
 
+  peachWhite: "#FAF7F7",
+
   orange: "#CB7202",
 
   gray: "#83829A",
@@ -11,7 +13,7 @@ const COLORS = {
   white: "#F3F4F8",
   lightWhite: "#FAFAFC",
 
-  black: "#3B3A37"
+  black: "#3B3A37",
 };
 
 const FONT = {
