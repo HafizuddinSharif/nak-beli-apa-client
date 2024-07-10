@@ -34,8 +34,6 @@ export default function Index() {
     setIngredientList((prev) => {
       const newPush = [...prev];
       newPush.push(newEntry.toString());
-      console.log("New entry added");
-      console.log(newPush);
       return newPush;
     });
   };
