@@ -28,9 +28,10 @@ export default function Meals() {
     setSearchInput(e);
   };
 
-  const goToViewMealPage = () => router.push("/view-meal");
+  const goToViewMealPage = (mealId: string) =>
+    router.push(`/view-meal/${mealId}`);
 
-  const goToAddNewMealPage = () => router.push(`/add-new-meal`);
+  const goToAddNewMealPage = () => router.push(`/edit-meal/new`);
 
   return (
     <SafeAreaView
@@ -67,8 +68,14 @@ export default function Meals() {
       <FlatList
         data={mealList}
         renderItem={({ index, item }) => {
-          const { meal_name } = item as MealSelection;
-          return <MealItem title={meal_name} handlePress={goToViewMealPage} />;
+          const { meal_name, id } = item as MealSelection;
+          return (
+            <MealItem
+              id={id}
+              title={meal_name}
+              handlePress={goToViewMealPage}
+            />
+          );
         }}
         numColumns={2}
         columnWrapperStyle={{ columnGap: 10 }}

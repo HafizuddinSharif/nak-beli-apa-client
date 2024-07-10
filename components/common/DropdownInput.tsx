@@ -1,13 +1,14 @@
+import { COLORS } from "@/constants";
 import { AntDesign } from "@expo/vector-icons";
 import { useState } from "react";
 import { StyleSheet, Text } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 
-const DropdownInput = ({ placeholder }: any) => {
+const DropdownInput = ({ placeholder, selectedValue = "", option }: any) => {
   const [isFocus, setIsFocus] = useState(false);
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState(selectedValue);
 
-  const data = [
+  const dummyOption = [
     { label: "Item 1", value: "1" },
     { label: "Item 2", value: "2" },
     { label: "Item 3", value: "3" },
@@ -17,6 +18,8 @@ const DropdownInput = ({ placeholder }: any) => {
     { label: "Item 7", value: "7" },
     { label: "Item 8", value: "8" },
   ];
+
+  const [data, setData] = useState(option ? option : dummyOption);
 
   const renderLabel = () => {
     if (value || isFocus) {
@@ -84,9 +87,10 @@ const styles = StyleSheet.create({
   },
   placeholderStyle: {
     fontSize: 14,
+    color: COLORS.gray2,
   },
   selectedTextStyle: {
-    fontSize: 16,
+    fontSize: 14,
   },
   iconStyle: {
     width: 0,
@@ -94,6 +98,6 @@ const styles = StyleSheet.create({
   },
   inputSearchStyle: {
     height: 40,
-    fontSize: 16,
+    fontSize: 14,
   },
 });
