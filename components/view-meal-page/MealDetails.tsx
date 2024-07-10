@@ -1,7 +1,7 @@
 import { Text } from "react-native";
 
-const MealDetails = () => {
-  return <Text>This is Meal Details</Text>;
+const MealDetails = ({ details }: any) => {
+  return <Text style={{ fontSize: 16 }}>{details}</Text>;
 };
 
 export default MealDetails;

@@ -1,7 +1,7 @@
 import { COLORS, SIZES } from "@/constants";
 import { View, Text, TouchableOpacity } from "react-native";
 
-const MealItem = ({ title, handlePress }: any) => {
+const MealItem = ({ title, handlePress, id }: any) => {
   return (
     <TouchableOpacity
       style={{
@@ -12,7 +12,7 @@ const MealItem = ({ title, handlePress }: any) => {
         justifyContent: "center",
         borderRadius: 10,
       }}
-      onPress={handlePress}
+      onPress={() => handlePress(id)}
     >
       <Text
         style={{
