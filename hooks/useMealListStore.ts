@@ -9,7 +9,6 @@ const useMealListStore: any = create((set: any) => ({
 export default useMealListStore;
 
 const addNewMeal = (set: any) => {
-  console.log("New meal is added :)");
   set(({ mealList }: any) => {
     return {
       mealList: [...mealList, dummyAddNewMeal],

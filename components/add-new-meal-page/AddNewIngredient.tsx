@@ -8,22 +8,17 @@ import {
   TextInput,
 } from "react-native";
 import DropdownInput from "../common/DropdownInput";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { dummyItems, dummyUnits } from "@/dummy_data";
+import useContentStore from "@/hooks/useContentStore";
 
 const AddNewIngredient = ({ item, handlePress }: any) => {
+  const { itemOptions, unitOptions } = useContentStore();
+
   const [itemId, setItemId] = useState(item ? item.item_selection_id.id : "");
   const [itemQuantity, setItemQuantity] = useState(item ? item.quantity : "");
   const [itemUnit, setItemUnit] = useState(
     item ? item.item_selection_id.unit : ""
-  );
-
-  // To set dropdown options
-  const [itemOptions, setItemOptions] = useState(
-    convertToDropdownOption(dummyItems)
-  );
-  const [unitOptions, setUnitOptions] = useState(
-    convertToDropdownOption(dummyUnits)
   );
 
   return (
@@ -103,25 +98,6 @@ const AddNewIngredient = ({ item, handlePress }: any) => {
       </View>
     </View>
   );
-};
-
-const convertToDropdownOption = (list: any): DropdownOption[] => {
-  if (!list) {
-    return [];
-  }
-  const options: DropdownOption[] = [];
-  list.forEach((elem) => {
-    if ("unit" in elem && !("item_name" in elem)) {
-      // elem is a Unit
-      options.push({ value: elem.unit, label: elem.unit });
-    } else if ("item_name" in elem) {
-      // elem is an ItemSelection
-      elem = elem as ItemSelection;
-      options.push({ value: elem.id, label: elem.item_name });
-    }
-  });
-
-  return options;
 };
 
 export default AddNewIngredient;

@@ -1,5 +1,5 @@
 import { Stack, useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   FlatList,
   SafeAreaView,
@@ -9,8 +9,17 @@ import {
 } from "react-native";
 import PageTitle from "@/components/common/PageTitle";
 import ChecklistItem from "@/components/checklist-page/ChecklistItem";
+import useContentStore from "@/hooks/useContentStore";
 
 export default function Index() {
+  const { fetchItemOptions, fetchUnitOptions } = useContentStore();
+
+  // Get all the needed contents
+  useEffect(() => {
+    fetchItemOptions();
+    fetchUnitOptions();
+  }, []);
+
   const router = useRouter();
   const dummyGroceryList: GroceryItem[] = [
     {
