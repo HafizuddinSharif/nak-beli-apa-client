@@ -14,14 +14,9 @@ import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
   FlatList,
-  Modal,
   SafeAreaView,
-  Text,
   TextInput,
-  StyleSheet,
   View,
-  Alert,
-  Pressable,
   TouchableOpacity,
 } from "react-native";
 
