@@ -10,6 +10,8 @@ import {
 import PageTitle from "@/components/common/PageTitle";
 import ChecklistItem from "@/components/checklist-page/ChecklistItem";
 import useContentStore from "@/hooks/useContentStore";
+import { Entypo, Ionicons } from "@expo/vector-icons";
+import { COLORS } from "@/constants";
 
 export default function Index() {
   const { fetchItemOptions, fetchUnitOptions } = useContentStore();
@@ -91,7 +93,7 @@ export default function Index() {
   const [groceryList, setGroceryList] = useState(dummyGroceryList);
 
   const handlePress = () => {
-    router.push(`/add-new-meal`);
+    router.push(`/select-meal`);
   };
 
   const handleToggle = (item: GroceryItem, isChecked: boolean) => {
@@ -121,6 +123,14 @@ export default function Index() {
           headerStyle: { backgroundColor: "#FFF" },
           headerShadowVisible: false,
           headerTitle: "",
+          headerRight: () => (
+            <TouchableOpacity
+              onPress={handlePress}
+              style={{ paddingRight: 20 }}
+            >
+              <Entypo name="add-to-list" size={30} color={COLORS.primary} />
+            </TouchableOpacity>
+          ),
         }}
       />
       {/* Page title */}

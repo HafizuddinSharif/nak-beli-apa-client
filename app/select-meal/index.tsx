@@ -15,7 +15,7 @@ import {
   View,
 } from "react-native";
 
-export default function Meals() {
+export default function Index() {
   const { mealList, addNewMeal } = useMealListStore();
   const router = useRouter();
 
@@ -28,7 +28,7 @@ export default function Meals() {
   const goToViewMealPage = (mealId: string) =>
     router.push(`/view-meal/${mealId}`);
 
-  const goToAddNewMealPage = () => router.push(`/edit-meal/new`);
+  const goToAddNewMealPage = () => console.log("Do nothing");
 
   return (
     <SafeAreaView
@@ -47,38 +47,48 @@ export default function Meals() {
             <TouchableOpacity onPress={goToAddNewMealPage}>
               <Ionicons
                 size={35}
-                name="add"
+                name="basket"
                 color={COLORS.primary}
-                style={{ paddingRight: 25 }}
+                style={{ paddingRight: 15 }}
               />
             </TouchableOpacity>
           ),
         }}
       />
-      {/* Page title */}
-      <PageTitle title="Lihat menu" />
 
-      {/* Search bar */}
-      <SearchBar value={searchInput} handleChange={handleChange} />
-
-      {/* List of meals */}
-      <FlatList
-        data={mealList}
-        renderItem={({ index, item }) => {
-          const { meal_name, id } = item as MealSelection;
-          return (
-            <MealItem
-              id={id}
-              title={meal_name}
-              handlePress={goToViewMealPage}
-            />
-          );
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: "#FFF",
+          paddingHorizontal: 30,
         }}
-        numColumns={2}
-        columnWrapperStyle={{ columnGap: 10 }}
-        keyExtractor={({ id }: MealSelection) => id}
-        ItemSeparatorComponent={() => <View style={{ height: 10 }}></View>}
-      />
+      >
+        {/* Page title */}
+        <PageTitle title="Pilih masakan" />
+
+        {/* Search bar */}
+        <SearchBar value={searchInput} handleChange={handleChange} />
+
+        {/* List of meals */}
+        <FlatList
+          data={mealList}
+          renderItem={({ index, item }) => {
+            const { meal_name, id } = item as MealSelection;
+            return (
+              <MealItem
+                id={id}
+                title={meal_name}
+                handlePress={goToViewMealPage}
+                variant={"select"}
+              />
+            );
+          }}
+          numColumns={2}
+          columnWrapperStyle={{ columnGap: 10 }}
+          keyExtractor={({ id }: MealSelection) => id}
+          ItemSeparatorComponent={() => <View style={{ height: 10 }}></View>}
+        />
+      </View>
     </SafeAreaView>
   );
 }

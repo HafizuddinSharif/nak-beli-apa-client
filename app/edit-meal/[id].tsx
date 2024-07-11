@@ -109,7 +109,7 @@ export default function EditMealPage() {
           value={menuName}
           onChangeText={(text) => setMenuName(text)}
           placeholder={TEXT.ADD_NEW_MEAL.MENU_NAME_PLACEHOLDER.BM}
-          placeholderTextColor={COLORS.black}
+          placeholderTextColor={COLORS.gray2}
           style={{
             borderBottomColor: COLORS.orange,
             width: "100%",
@@ -117,6 +117,7 @@ export default function EditMealPage() {
             textAlign: "center",
             paddingVertical: 5,
             marginBottom: 20,
+            fontSize: 20,
           }}
         />
 
@@ -124,6 +125,7 @@ export default function EditMealPage() {
           title={TEXT.ADD_NEW_MEAL.ADD_INGREDIENT_SUBHEADING.BM}
         />
 
+        {/* List to add ingredients */}
         <View style={{ maxHeight: 500 }}>
           <FlatList
             data={ingredientList}
