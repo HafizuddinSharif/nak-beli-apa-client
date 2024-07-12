@@ -1,7 +1,7 @@
 import PageTitle from "@/components/common/PageTitle";
 import SearchBar from "@/components/common/SearchBar";
 import MealItem from "@/components/meals-page/MealItem";
-import { COLORS, SIZES } from "@/constants";
+import { COLORS } from "@/constants";
 import useBasketStore from "@/hooks/useBasketStore";
 import useMealListStore from "@/hooks/useMealListStore";
 import { Ionicons } from "@expo/vector-icons";
@@ -84,16 +84,14 @@ export default function Index() {
         <FlatList
           data={mealList}
           renderItem={({ index, item }) => {
-            const { meal_name, id } = item as MealSelection;
             return (
               <MealItem
-                id={id}
-                title={meal_name}
                 handlePress={goToViewMealPage}
                 item={item}
                 selectedMeals={selectedMeals}
                 handleAdd={handleAdd}
                 handleRemove={handleRemove}
+                isFor={"select"}
               />
             );
           }}

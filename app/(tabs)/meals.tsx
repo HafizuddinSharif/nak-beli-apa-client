@@ -65,14 +65,7 @@ export default function Meals() {
       <FlatList
         data={mealList}
         renderItem={({ index, item }) => {
-          const { meal_name, id } = item as MealSelection;
-          return (
-            <MealItem
-              id={id}
-              title={meal_name}
-              handlePress={goToViewMealPage}
-            />
-          );
+          return <MealItem handlePress={goToViewMealPage} item={item} />;
         }}
         numColumns={2}
         columnWrapperStyle={{ columnGap: 10 }}
