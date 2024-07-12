@@ -12,14 +12,17 @@ import ChecklistItem from "@/components/checklist-page/ChecklistItem";
 import useContentStore from "@/hooks/useContentStore";
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import { COLORS } from "@/constants";
+import useBasketStore from "@/hooks/useBasketStore";
 
 export default function Index() {
   const { fetchItemOptions, fetchUnitOptions } = useContentStore();
+  const { fetchSelectedMeals } = useBasketStore();
 
   // Get all the needed contents
   useEffect(() => {
     fetchItemOptions();
     fetchUnitOptions();
+    fetchSelectedMeals();
   }, []);
 
   const router = useRouter();

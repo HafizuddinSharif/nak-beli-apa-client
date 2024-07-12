@@ -2,6 +2,7 @@ import PageTitle from "@/components/common/PageTitle";
 import SearchBar from "@/components/common/SearchBar";
 import MealItem from "@/components/meals-page/MealItem";
 import { COLORS, SIZES } from "@/constants";
+import useBasketStore from "@/hooks/useBasketStore";
 import useMealListStore from "@/hooks/useMealListStore";
 import { Ionicons } from "@expo/vector-icons";
 import { Stack, useRouter } from "expo-router";
@@ -17,6 +18,8 @@ import {
 
 export default function Index() {
   const { mealList, addNewMeal } = useMealListStore();
+  const { selectedMeals, numOfSelectedMeals, addMeal, removeMeal } =
+    useBasketStore();
   const router = useRouter();
 
   const [searchInput, setSearchInput] = useState("");
@@ -29,6 +32,14 @@ export default function Index() {
     router.push(`/view-meal/${mealId}`);
 
   const goToAddNewMealPage = () => console.log("Do nothing");
+
+  const handleAdd = (newMeal: MealSelection) => {
+    addMeal(newMeal);
+  };
+
+  const handleRemove = (mealId: number) => {
+    removeMeal(mealId);
+  };
 
   return (
     <SafeAreaView
@@ -79,7 +90,10 @@ export default function Index() {
                 id={id}
                 title={meal_name}
                 handlePress={goToViewMealPage}
-                variant={"select"}
+                item={item}
+                selectedMeals={selectedMeals}
+                handleAdd={handleAdd}
+                handleRemove={handleRemove}
               />
             );
           }}

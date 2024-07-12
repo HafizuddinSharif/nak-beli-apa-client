@@ -6,12 +6,14 @@ const MealItem = ({
   title,
   handlePress,
   id,
-  variant,
   handleAdd,
-  handleDelete,
+  handleRemove,
+  item,
+  selectedMeals,
 }: any) => {
+  const selected = selectedMeals.find((meal) => meal.id == item.id);
   // For select-meal page
-  if (variant == "select") {
+  if (selected) {
     return (
       <TouchableOpacity
         style={{
@@ -51,16 +53,20 @@ const MealItem = ({
               padding: 3,
               borderRadius: 20,
             }}
+            onPress={() => handleAdd(item)}
           >
             <Ionicons name="add" size={30} color={COLORS.white} />
           </TouchableOpacity>
-          <Text style={{ fontSize: 20 }}>{1}</Text>
+          <Text style={{ fontSize: 20 }}>
+            {selected.quantity ? selected.quantity : 0}
+          </Text>
           <TouchableOpacity
             style={{
               backgroundColor: COLORS.red,
               padding: 3,
               borderRadius: 20,
             }}
+            onPress={() => handleRemove(item.id)}
           >
             <Ionicons name="remove" size={30} color={COLORS.white} />
           </TouchableOpacity>
