@@ -13,10 +13,12 @@ import useContentStore from "@/hooks/useContentStore";
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import { COLORS } from "@/constants";
 import useBasketStore from "@/hooks/useBasketStore";
+import useChecklistStore from "@/hooks/useChecklistStore";
 
 export default function Index() {
   const { fetchItemOptions, fetchUnitOptions } = useContentStore();
   const { fetchSelectedMeals } = useBasketStore();
+  const { checklist } = useChecklistStore();
 
   // Get all the needed contents
   useEffect(() => {
@@ -26,74 +28,8 @@ export default function Index() {
   }, []);
 
   const router = useRouter();
-  const dummyGroceryList: GroceryItem[] = [
-    {
-      id: 1,
-      item_name: "Red Onion",
-      quantity: 2,
-      unit: "piece(s)",
-      hasBought: false,
-    },
-    {
-      id: 2,
-      item_name: "Banana",
-      quantity: 6,
-      unit: "piece(s)",
-      hasBought: false,
-    },
-    {
-      id: 3,
-      item_name: "Milk",
-      quantity: 1,
-      unit: "liter(s)",
-      hasBought: false,
-    },
-    { id: 4, item_name: "Bread", quantity: 1, unit: "loaf", hasBought: false },
-    {
-      id: 5,
-      item_name: "Eggs",
-      quantity: 12,
-      unit: "piece(s)",
-      hasBought: true,
-    },
-    {
-      id: 6,
-      item_name: "Chicken Breast",
-      quantity: 1,
-      unit: "kg",
-      hasBought: false,
-    },
-    {
-      id: 7,
-      item_name: "Tomatoes",
-      quantity: 5,
-      unit: "piece(s)",
-      hasBought: true,
-    },
-    {
-      id: 8,
-      item_name: "Cucumber",
-      quantity: 2,
-      unit: "piece(s)",
-      hasBought: false,
-    },
-    {
-      id: 9,
-      item_name: "Cheddar Cheese",
-      quantity: 200,
-      unit: "gram(s)",
-      hasBought: true,
-    },
-    {
-      id: 10,
-      item_name: "Olive Oil",
-      quantity: 500,
-      unit: "ml",
-      hasBought: false,
-    },
-  ];
 
-  const [groceryList, setGroceryList] = useState(dummyGroceryList);
+  const [groceryList, setGroceryList] = useState(checklist);
 
   const handlePress = () => {
     router.push(`/select-meal`);
@@ -101,7 +37,6 @@ export default function Index() {
 
   const handleToggle = (item: GroceryItem, isChecked: boolean) => {
     item.hasBought = isChecked;
-    console.log(`Found this guy ${item.id} ${item.item_name}`);
     setGroceryList(
       groceryList.map((g) => {
         if (g.id === item.id) {
@@ -142,7 +77,7 @@ export default function Index() {
       {/* List of checklist item */}
       <FlatList
         data={groceryList}
-        renderItem={({ item }) => (
+        renderItem={({ item }: { item: GroceryItem }) => (
           <ChecklistItem handleToggle={handleToggle} item={item} />
         )}
         keyExtractor={(item) => item.id.toString()}

@@ -22,7 +22,6 @@ import {
 
 export default function EditMealPage() {
   const params = useLocalSearchParams();
-  console.log("This meal ID: ", params.id);
   const [meal, setMeal] = useState(
     params.id !== "new"
       ? dummyMeals.find((item) => item.id === params.id)
