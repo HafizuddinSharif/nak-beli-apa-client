@@ -7,14 +7,7 @@ import useMealListStore from "@/hooks/useMealListStore";
 import { Ionicons } from "@expo/vector-icons";
 import { Stack, useRouter } from "expo-router";
 import { useState } from "react";
-import {
-  FlatList,
-  SafeAreaView,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { FlatList, SafeAreaView, TouchableOpacity, View } from "react-native";
 
 export default function Index() {
   const { mealList, addNewMeal } = useMealListStore();
