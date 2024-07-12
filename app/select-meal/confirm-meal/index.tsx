@@ -1,13 +1,18 @@
 import PageTitle from "@/components/common/PageTitle";
-import SearchBar from "@/components/common/SearchBar";
+import PrimaryBtn from "@/components/common/PrimaryBtn";
 import MealItem from "@/components/meals-page/MealItem";
 import { COLORS } from "@/constants";
 import useBasketStore from "@/hooks/useBasketStore";
 import useMealListStore from "@/hooks/useMealListStore";
-import { Ionicons } from "@expo/vector-icons";
 import { Stack, useRouter } from "expo-router";
 import { useState } from "react";
-import { FlatList, SafeAreaView, TouchableOpacity, View } from "react-native";
+import {
+  FlatList,
+  SafeAreaView,
+  TouchableOpacity,
+  View,
+  Text,
+} from "react-native";
 
 export default function Index() {
   const { mealList, addNewMeal } = useMealListStore();
@@ -24,8 +29,7 @@ export default function Index() {
   const goToViewMealPage = (mealId: string) =>
     router.push(`/view-meal/${mealId}`);
 
-  const goToConfirmMealPage = () =>
-    router.navigate("/select-meal/confirm-meal");
+  const goToAddNewMealPage = () => console.log("Do nothing");
 
   const handleAdd = (newMeal: MealSelection) => {
     addMeal(newMeal);
@@ -48,16 +52,6 @@ export default function Index() {
           headerStyle: { backgroundColor: "#FFF" },
           headerShadowVisible: false,
           headerTitle: "",
-          headerRight: () => (
-            <TouchableOpacity onPress={goToConfirmMealPage}>
-              <Ionicons
-                size={35}
-                name="basket"
-                color={COLORS.primary}
-                style={{ paddingRight: 15 }}
-              />
-            </TouchableOpacity>
-          ),
         }}
       />
 
@@ -69,14 +63,11 @@ export default function Index() {
         }}
       >
         {/* Page title */}
-        <PageTitle title="Pilih masakan" />
-
-        {/* Search bar */}
-        <SearchBar value={searchInput} handleChange={handleChange} />
+        <PageTitle title="Pastikan pilihan masakan" />
 
         {/* List of meals */}
         <FlatList
-          data={mealList}
+          data={selectedMeals}
           renderItem={({ index, item }) => {
             return (
               <MealItem
@@ -94,6 +85,7 @@ export default function Index() {
           keyExtractor={({ id }: MealSelection) => id}
           ItemSeparatorComponent={() => <View style={{ height: 10 }}></View>}
         />
+        <PrimaryBtn title={"Pilih ini"} handlePress={() => null} />
       </View>
     </SafeAreaView>
   );
