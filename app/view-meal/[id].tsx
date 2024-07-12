@@ -10,13 +10,16 @@ import MealIngredients from "@/components/view-meal-page/MealIngredients";
 import MealSteps from "@/components/view-meal-page/MealSteps";
 import { useState } from "react";
 import { OPTION } from "@/constants/add-new-meal";
+import useMealListStore from "@/hooks/useMealListStore";
 
 export default function ViewMealPage(): any {
   const params = useLocalSearchParams();
   const router = useRouter();
 
+  const { mealList } = useMealListStore();
+
   const [meal, setMeal] = useState(
-    dummyMeals.find((item) => item.id === params.id)
+    mealList.find((item) => item.id === params.id)
   );
 
   // set states

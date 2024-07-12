@@ -61,6 +61,7 @@ const MealItem = ({
         alignItems: "center",
         justifyContent: "center",
         borderRadius: 10,
+        maxWidth: "50%",
       }}
       onPress={() =>
         isFor == "select" ? handleAdd(item) : handlePress(item.id)

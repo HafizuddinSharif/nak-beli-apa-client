@@ -48,6 +48,49 @@ export default function Index() {
     );
   };
 
+  const EmptyChecklistRender = () => {
+    return (
+      <View style={{ margin: "auto" }}>
+        <Ionicons
+          name="alert-circle-outline"
+          size={40}
+          style={{ margin: "auto" }}
+          color={COLORS.gray2}
+        />
+        <Text
+          style={{
+            fontSize: 20,
+            textAlign: "center",
+            color: COLORS.gray2,
+            marginTop: 15,
+          }}
+        >
+          {
+            "Nampaknya senarai awak kosong, boleh klik butang di hujung kanan untuk buat senarai baru"
+          }
+        </Text>
+      </View>
+    );
+  };
+
+  const ExistChecklistRender = () => {
+    return (
+      <View>
+        {/* Page title */}
+        <PageTitle title="Senarai bahan untuk dibeli" />
+
+        {/* List of checklist item */}
+        <FlatList
+          data={groceryList}
+          renderItem={({ item }: { item: GroceryItem }) => (
+            <ChecklistItem handleToggle={handleToggle} item={item} />
+          )}
+          keyExtractor={(item) => item.id.toString()}
+        />
+      </View>
+    );
+  };
+
   return (
     <SafeAreaView
       style={{
@@ -71,17 +114,9 @@ export default function Index() {
           ),
         }}
       />
-      {/* Page title */}
-      <PageTitle title="Senarai bahan untuk dibeli" />
 
-      {/* List of checklist item */}
-      <FlatList
-        data={groceryList}
-        renderItem={({ item }: { item: GroceryItem }) => (
-          <ChecklistItem handleToggle={handleToggle} item={item} />
-        )}
-        keyExtractor={(item) => item.id.toString()}
-      />
+      {groceryList.length == 0 && <EmptyChecklistRender />}
+      {groceryList.length > 0 && <ExistChecklistRender />}
     </SafeAreaView>
   );
 }

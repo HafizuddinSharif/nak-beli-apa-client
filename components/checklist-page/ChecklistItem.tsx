@@ -20,7 +20,12 @@ const ChecklistItem = ({
         onPress={(isChecked: boolean) => handleToggle(item, isChecked)}
         isChecked={item.hasBought}
       />
-      <Text>{`${item.quantity} ${item.item_selection.unit} of ${item.item_selection.item_name} `}</Text>
+      <Text
+        style={{
+          fontSize: 16,
+          alignSelf: "center",
+        }}
+      >{`${item.quantity} ${item.item_selection.unit} of ${item.item_selection.item_name} `}</Text>
     </View>
   );
 };

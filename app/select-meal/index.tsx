@@ -24,8 +24,11 @@ export default function Index() {
   const goToViewMealPage = (mealId: string) =>
     router.push(`/view-meal/${mealId}`);
 
-  const goToConfirmMealPage = () =>
-    router.navigate("/select-meal/confirm-meal");
+  const goToConfirmMealPage = () => {
+    if (selectedMeals.length > 0) {
+      router.navigate("/select-meal/confirm-meal");
+    }
+  };
 
   const handleAdd = (newMeal: MealSelection) => {
     addMeal(newMeal);
