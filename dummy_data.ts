@@ -1,21 +1,141 @@
 // Dummy data
 // Define ItemSelection objects
 const dummyItems: ItemSelection[] = [
-  { id: "item-1", item_name: "Fish Fillet", unit: "piece" },
-  { id: "item-2", item_name: "Red Chili Sauce", unit: "cup" },
-  { id: "item-3", item_name: "Coconut Rice", unit: "serving" },
-  { id: "item-4", item_name: "Sambal", unit: "serving" },
-  { id: "item-5", item_name: "Fried Anchovies", unit: "serving" },
-  { id: "item-6", item_name: "Boiled Egg", unit: "piece" },
-  { id: "item-7", item_name: "Chicken", unit: "piece" },
-  { id: "item-8", item_name: "Turmeric", unit: "teaspoon" },
-  { id: "item-9", item_name: "Coconut Milk", unit: "cup" },
-  { id: "item-10", item_name: "Potatoes", unit: "piece" },
-  { id: "item-11", item_name: "Salt", unit: "teaspoon" },
-  { id: "item-12", item_name: "Oil", unit: "cup" },
-  { id: "item-13", item_name: "Grill Seasoning", unit: "teaspoon" },
-  { id: "item-14", item_name: "Salmon Fillet", unit: "piece" },
-  { id: "item-15", item_name: "Mentai Sauce", unit: "cup" },
+  {
+    id: "item-1",
+    item_name: "Fish Fillet",
+    unit: "piece",
+    units: [
+      { id: "11", unit: "piece" },
+      { id: "1", unit: "kg" },
+    ],
+  },
+  {
+    id: "item-2",
+    item_name: "Red Chili Sauce",
+    unit: "cup",
+    units: [
+      { id: "8", unit: "cup" },
+      { id: "7", unit: "ml" },
+    ],
+  },
+  {
+    id: "item-3",
+    item_name: "Coconut Rice",
+    unit: "serving",
+    units: [
+      { id: "12", unit: "serving" },
+      { id: "8", unit: "cup" },
+    ],
+  },
+  {
+    id: "item-4",
+    item_name: "Sambal",
+    unit: "serving",
+    units: [
+      { id: "12", unit: "serving" },
+      { id: "9", unit: "tbsp" },
+    ],
+  },
+  {
+    id: "item-5",
+    item_name: "Fried Anchovies",
+    unit: "serving",
+    units: [
+      { id: "12", unit: "serving" },
+      { id: "9", unit: "tbsp" },
+    ],
+  },
+  {
+    id: "item-6",
+    item_name: "Boiled Egg",
+    unit: "piece",
+    units: [
+      { id: "11", unit: "piece" },
+      { id: "13", unit: "slice" },
+    ],
+  },
+  {
+    id: "item-7",
+    item_name: "Chicken",
+    unit: "piece",
+    units: [
+      { id: "11", unit: "piece" },
+      { id: "1", unit: "kg" },
+    ],
+  },
+  {
+    id: "item-8",
+    item_name: "Turmeric",
+    unit: "teaspoon",
+    units: [
+      { id: "10", unit: "tsp" },
+      { id: "2", unit: "g" },
+    ],
+  },
+  {
+    id: "item-9",
+    item_name: "Coconut Milk",
+    unit: "cup",
+    units: [
+      { id: "8", unit: "cup" },
+      { id: "7", unit: "ml" },
+    ],
+  },
+  {
+    id: "item-10",
+    item_name: "Potatoes",
+    unit: "piece",
+    units: [
+      { id: "11", unit: "piece" },
+      { id: "1", unit: "kg" },
+    ],
+  },
+  {
+    id: "item-11",
+    item_name: "Salt",
+    unit: "teaspoon",
+    units: [
+      { id: "10", unit: "tsp" },
+      { id: "2", unit: "g" },
+    ],
+  },
+  {
+    id: "item-12",
+    item_name: "Oil",
+    unit: "cup",
+    units: [
+      { id: "8", unit: "cup" },
+      { id: "7", unit: "ml" },
+    ],
+  },
+  {
+    id: "item-13",
+    item_name: "Grill Seasoning",
+    unit: "teaspoon",
+    units: [
+      { id: "10", unit: "tsp" },
+      { id: "2", unit: "g" },
+    ],
+  },
+  {
+    id: "item-14",
+    item_name: "Salmon Fillet",
+    unit: "piece",
+    units: [
+      { id: "11", unit: "piece" },
+      { id: "1", unit: "kg" },
+    ],
+  },
+  {
+    id: "item-15",
+    item_name: "Mentai Sauce",
+    unit: "cup",
+    units: [
+      { id: "8", unit: "cup" },
+      { id: "7", unit: "ml" },
+    ],
+  },
 ];
 
 const dummyUnits: Unit[] = [
@@ -57,11 +177,13 @@ const dummyMeals: MealSelection[] = [
         id: "meal-1-item-1",
         item_selection_id: getItemSelection("Fish Fillet"),
         quantity: 1,
+        unit: { id: "11", unit: "piece" },
       },
       {
         id: "meal-1-item-2",
         item_selection_id: getItemSelection("Red Chili Sauce"),
         quantity: 2,
+        unit: { id: "9", unit: "tbsp" },
       },
     ],
     cooking_guide: "",
@@ -76,21 +198,25 @@ const dummyMeals: MealSelection[] = [
         id: "meal-2-item-1",
         item_selection_id: getItemSelection("Coconut Rice"),
         quantity: 1,
+        unit: { id: "8", unit: "cup" },
       },
       {
         id: "meal-2-item-2",
         item_selection_id: getItemSelection("Sambal"),
         quantity: 1,
+        unit: { id: "9", unit: "tbsp" },
       },
       {
         id: "meal-2-item-3",
         item_selection_id: getItemSelection("Fried Anchovies"),
         quantity: 1,
+        unit: { id: "9", unit: "tbsp" },
       },
       {
         id: "meal-2-item-4",
         item_selection_id: getItemSelection("Boiled Egg"),
         quantity: 1,
+        unit: { id: "11", unit: "piece" },
       },
     ],
     cooking_guide: "",
@@ -105,16 +231,19 @@ const dummyMeals: MealSelection[] = [
         id: "meal-3-item-1",
         item_selection_id: getItemSelection("Chicken"),
         quantity: 1,
+        unit: { id: "1", unit: "kg" },
       },
       {
         id: "meal-3-item-2",
         item_selection_id: getItemSelection("Turmeric"),
         quantity: 1,
+        unit: { id: "9", unit: "tbsp" },
       },
       {
         id: "meal-3-item-3",
         item_selection_id: getItemSelection("Coconut Milk"),
         quantity: 2,
+        unit: { id: "8", unit: "cup" },
       },
     ],
     cooking_guide: "",
@@ -129,16 +258,19 @@ const dummyMeals: MealSelection[] = [
         id: "meal-4-item-1",
         item_selection_id: getItemSelection("Potatoes"),
         quantity: 2,
+        unit: { id: "11", unit: "piece" },
       },
       {
         id: "meal-4-item-2",
         item_selection_id: getItemSelection("Salt"),
         quantity: 1,
+        unit: { id: "10", unit: "tsp" },
       },
       {
         id: "meal-4-item-3",
         item_selection_id: getItemSelection("Oil"),
         quantity: 1,
+        unit: { id: "8", unit: "cup" },
       },
     ],
     cooking_guide: "",
@@ -152,11 +284,13 @@ const dummyMeals: MealSelection[] = [
         id: "meal-5-item-1",
         item_selection_id: getItemSelection("Chicken"),
         quantity: 1,
+        unit: { id: "1", unit: "kg" },
       },
       {
         id: "meal-5-item-2",
         item_selection_id: getItemSelection("Grill Seasoning"),
         quantity: 1,
+        unit: { id: "9", unit: "tbsp" },
       },
     ],
     cooking_guide: "",
@@ -171,11 +305,13 @@ const dummyMeals: MealSelection[] = [
         id: "meal-6-item-1",
         item_selection_id: getItemSelection("Salmon Fillet"),
         quantity: 1,
+        unit: { id: "11", unit: "piece" },
       },
       {
         id: "meal-6-item-2",
         item_selection_id: getItemSelection("Mentai Sauce"),
         quantity: 1,
+        unit: { id: "9", unit: "tbsp" },
       },
     ],
     cooking_guide: "",
@@ -197,8 +333,9 @@ const dummyAddNewItemForMeal = (
   const generatedId = `${mealId}-item-${itemCount}`;
   return {
     id: generatedId,
-    item_selection_id: { id: "XXX", item_name: "", unit: "" },
+    item_selection_id: { id: "XXX", item_name: "", unit: "", units: [] },
     quantity: null,
+    unit: { id: "XXX", unit: "" },
   };
 };
 

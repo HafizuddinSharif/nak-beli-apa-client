@@ -55,6 +55,17 @@ export default function EditMealPage() {
     });
   };
 
+  const onEditItem = (editItem: ItemForMeal) => {
+    setIngredientList((prev) => {
+      const newList = [...prev];
+      const toEdit = newList.find((item) => item.id == editItem.id);
+      toEdit.item_selection_id = editItem.item_selection_id;
+      toEdit.quantity = editItem.quantity;
+      toEdit.unit = editItem.unit;
+      return newList;
+    });
+  };
+
   const onRemoveItem = (id: string) => {
     setIngredientList((prev) => {
       const updatedList = [...prev];
@@ -159,6 +170,7 @@ export default function EditMealPage() {
                 <AddNewIngredient
                   item={item}
                   handlePress={() => onRemoveItem(id)}
+                  handleChange={onEditItem}
                 />
               );
             }}

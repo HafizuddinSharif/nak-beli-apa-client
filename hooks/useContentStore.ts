@@ -24,8 +24,12 @@ const convertToDropdownOption = (list: any): DropdownOption[] => {
 const useContentStore: any = create((set: any) => ({
   unitOptions: [] as DropdownOption[],
   itemOptions: [] as DropdownOption[],
+  itemList: [] as ItemSelection[],
+  unitList: [] as Unit[],
   fetchUnitOptions: () => fetchUnitOptions(set),
   fetchItemOptions: () => fetchItemOptions(set),
+  fetchItemList: () => fetchItemList(set),
+  fetchUnitList: () => fetchUnitList(set),
 }));
 
 export default useContentStore;
@@ -48,6 +52,22 @@ const fetchItemOptions = (set: any) => {
   set(() => {
     return {
       itemOptions: dropdownOption,
+    };
+  });
+};
+
+const fetchItemList = (set: any) => {
+  set(() => {
+    return {
+      itemList: dummyItems,
+    };
+  });
+};
+
+const fetchUnitList = (set: any) => {
+  set(() => {
+    return {
+      unitList: dummyUnits,
     };
   });
 };

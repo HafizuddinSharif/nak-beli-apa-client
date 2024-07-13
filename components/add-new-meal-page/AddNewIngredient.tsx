@@ -9,18 +9,97 @@ import {
 } from "react-native";
 import DropdownInput from "../common/DropdownInput";
 import { useEffect, useState } from "react";
-import { dummyItems, dummyUnits } from "@/dummy_data";
 import useContentStore from "@/hooks/useContentStore";
 
-const AddNewIngredient = ({ item, handlePress }: any) => {
-  const { itemOptions, unitOptions } = useContentStore();
+const convertToDropdownOption = (list: any): DropdownOption[] => {
+  if (!list) {
+    return [];
+  }
+  const options: DropdownOption[] = [];
+  list.forEach((elem) => {
+    if ("unit" in elem && !("item_name" in elem)) {
+      // elem is a Unit
+      options.push({ value: elem.unit, label: elem.unit });
+    } else if ("item_name" in elem) {
+      // elem is an ItemSelection
+      elem = elem as ItemSelection;
+      options.push({ value: elem.id, label: elem.item_name });
+    }
+  });
 
-  const [itemId, setItemId] = useState(item ? item.item_selection_id.id : "");
+  return options;
+};
+
+const AddNewIngredient = ({
+  item,
+  handlePress,
+  handleChange,
+}: {
+  item: ItemForMeal;
+  handlePress: any;
+  handleChange: any;
+}) => {
+  const {
+    itemOptions,
+    itemList,
+    unitList,
+  }: {
+    itemOptions: DropdownOption[];
+    itemList: ItemSelection[];
+    unitList: Unit[];
+  } = useContentStore();
+
+  const [itemSelection, setItemSelection] = useState(
+    item ? item.item_selection_id : null
+  );
   const [itemQuantity, setItemQuantity] = useState(item ? item.quantity : "");
-  const [itemUnit, setItemUnit] = useState(
-    item ? item.item_selection_id.unit : ""
+  const [itemUnit, setItemUnit] = useState(item ? item.unit : null);
+  const [unitOptions, setUnitOptions] = useState(
+    item ? convertToDropdownOption(item.item_selection_id.units) : []
   );
 
+  const onChangeQuantity = (quantity: string) => {
+    setItemQuantity(quantity);
+    const editItem = {
+      id: item.id,
+      item_selection_id: itemSelection,
+      quantity: parseInt(quantity),
+      unit: itemUnit,
+    } as ItemForMeal;
+    handleChange(editItem);
+  };
+
+  const onChangeItem = (itemIdValue: string) => {
+    setItemUnit(null);
+    const itemObj = itemList.find(
+      (elem) => elem.id === itemIdValue
+    ) as ItemSelection;
+    const newUnitOptions = convertToDropdownOption(itemObj.units);
+    console.log(newUnitOptions);
+    setUnitOptions(newUnitOptions);
+    setItemSelection(itemObj);
+    const editItem = {
+      id: item.id,
+      item_selection_id: itemObj,
+      quantity: itemQuantity,
+      unit: itemUnit,
+    } as ItemForMeal;
+    handleChange(editItem);
+  };
+
+  const onChangeUnit = (unitValue: string) => {
+    console.log(unitValue);
+    const unitObj = unitList.find((elem) => elem.unit === unitValue) as Unit;
+    console.log(unitObj);
+    setItemUnit(unitObj);
+    const editItem = {
+      id: item.id,
+      item_selection_id: item.item_selection_id,
+      quantity: itemQuantity,
+      unit: unitObj,
+    } as ItemForMeal;
+    handleChange(editItem);
+  };
   return (
     <View style={{ flexDirection: "row", columnGap: 5 }}>
       {/* Left-side add button */}
@@ -52,8 +131,9 @@ const AddNewIngredient = ({ item, handlePress }: any) => {
         <View style={{ flex: 2 }}>
           <DropdownInput
             placeholder="Nama bahan"
-            selectedValue={itemId}
+            selectedValue={itemSelection.id}
             option={itemOptions}
+            onChange={onChangeItem}
           />
         </View>
         <View
@@ -76,7 +156,7 @@ const AddNewIngredient = ({ item, handlePress }: any) => {
             keyboardType="numeric"
             selectionColor={COLORS.secondary}
             value={itemQuantity ? itemQuantity.toString() : ""}
-            onChangeText={setItemQuantity}
+            onChangeText={onChangeQuantity}
           />
         </View>
         <View
@@ -93,6 +173,7 @@ const AddNewIngredient = ({ item, handlePress }: any) => {
             placeholder="Unit"
             selectedValue={itemUnit}
             option={unitOptions}
+            onChange={onChangeUnit}
           />
         </View>
       </View>

@@ -4,7 +4,12 @@ import { useState } from "react";
 import { StyleSheet, Text } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 
-const DropdownInput = ({ placeholder, selectedValue = "", option }: any) => {
+const DropdownInput = ({
+  placeholder,
+  selectedValue = "",
+  option,
+  onChange,
+}: any) => {
   const [isFocus, setIsFocus] = useState(false);
   const [value, setValue] = useState(selectedValue);
 
@@ -18,8 +23,6 @@ const DropdownInput = ({ placeholder, selectedValue = "", option }: any) => {
     { label: "Item 7", value: "7" },
     { label: "Item 8", value: "8" },
   ];
-
-  const [data, setData] = useState(option ? option : dummyOption);
 
   const renderLabel = () => {
     if (value || isFocus) {
@@ -39,7 +42,7 @@ const DropdownInput = ({ placeholder, selectedValue = "", option }: any) => {
       selectedTextStyle={styles.selectedTextStyle}
       inputSearchStyle={styles.inputSearchStyle}
       iconStyle={styles.iconStyle}
-      data={data}
+      data={option}
       search
       maxHeight={300}
       labelField="label"
@@ -52,6 +55,7 @@ const DropdownInput = ({ placeholder, selectedValue = "", option }: any) => {
       onChange={(item) => {
         setValue(item.value);
         setIsFocus(false);
+        onChange(item.value);
       }}
     />
   );

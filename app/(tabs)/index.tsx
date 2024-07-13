@@ -16,7 +16,8 @@ import useBasketStore from "@/hooks/useBasketStore";
 import useChecklistStore from "@/hooks/useChecklistStore";
 
 export default function Index() {
-  const { fetchItemOptions, fetchUnitOptions } = useContentStore();
+  const { fetchItemOptions, fetchUnitOptions, fetchUnitList, fetchItemList } =
+    useContentStore();
   const { fetchSelectedMeals } = useBasketStore();
   const { checklist } = useChecklistStore();
 
@@ -25,6 +26,8 @@ export default function Index() {
     fetchItemOptions();
     fetchUnitOptions();
     fetchSelectedMeals();
+    fetchUnitList();
+    fetchItemList();
   }, []);
 
   const router = useRouter();
