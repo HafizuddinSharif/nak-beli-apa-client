@@ -25,7 +25,7 @@ const ChecklistItem = ({
           fontSize: 16,
           alignSelf: "center",
         }}
-      >{`${item.quantity} ${item.item_selection.unit} of ${item.item_selection.item_name} `}</Text>
+      >{`${item.quantity} ${item.unit.unit} of ${item.item_selection.item_name} `}</Text>
     </View>
   );
 };

@@ -12,7 +12,8 @@ const generateChecklist = (set: any, selectedMeals: MealBasketItem[]) => {
     selectedMeals.forEach((meal) => {
       meal.item_list.forEach((item, index) => {
         const alreadyHave = newChecklist.find(
-          (itm) => itm.id === item.item_selection_id.id
+          (itm) =>
+            itm.id === item.item_selection_id.id && itm.unit === item.unit
         );
 
         if (alreadyHave) {
@@ -24,6 +25,7 @@ const generateChecklist = (set: any, selectedMeals: MealBasketItem[]) => {
             item_selection: item.item_selection_id,
             hasBought: false,
             quantity: item.quantity * meal.quantity,
+            unit: item.unit,
           } as GroceryItem;
           newChecklist.push(newGroceryItem);
         }
