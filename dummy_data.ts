@@ -4,7 +4,6 @@ const dummyItems: ItemSelection[] = [
   {
     id: "item-1",
     item_name: "Fish Fillet",
-    unit: "piece",
     units: [
       { id: "11", unit: "piece" },
       { id: "1", unit: "kg" },
@@ -13,7 +12,6 @@ const dummyItems: ItemSelection[] = [
   {
     id: "item-2",
     item_name: "Red Chili Sauce",
-    unit: "cup",
     units: [
       { id: "8", unit: "cup" },
       { id: "7", unit: "ml" },
@@ -22,7 +20,6 @@ const dummyItems: ItemSelection[] = [
   {
     id: "item-3",
     item_name: "Coconut Rice",
-    unit: "serving",
     units: [
       { id: "12", unit: "serving" },
       { id: "8", unit: "cup" },
@@ -31,7 +28,6 @@ const dummyItems: ItemSelection[] = [
   {
     id: "item-4",
     item_name: "Sambal",
-    unit: "serving",
     units: [
       { id: "12", unit: "serving" },
       { id: "9", unit: "tbsp" },
@@ -40,7 +36,6 @@ const dummyItems: ItemSelection[] = [
   {
     id: "item-5",
     item_name: "Fried Anchovies",
-    unit: "serving",
     units: [
       { id: "12", unit: "serving" },
       { id: "9", unit: "tbsp" },
@@ -49,7 +44,6 @@ const dummyItems: ItemSelection[] = [
   {
     id: "item-6",
     item_name: "Boiled Egg",
-    unit: "piece",
     units: [
       { id: "11", unit: "piece" },
       { id: "13", unit: "slice" },
@@ -58,7 +52,6 @@ const dummyItems: ItemSelection[] = [
   {
     id: "item-7",
     item_name: "Chicken",
-    unit: "piece",
     units: [
       { id: "11", unit: "piece" },
       { id: "1", unit: "kg" },
@@ -67,7 +60,6 @@ const dummyItems: ItemSelection[] = [
   {
     id: "item-8",
     item_name: "Turmeric",
-    unit: "teaspoon",
     units: [
       { id: "10", unit: "tsp" },
       { id: "2", unit: "g" },
@@ -76,7 +68,6 @@ const dummyItems: ItemSelection[] = [
   {
     id: "item-9",
     item_name: "Coconut Milk",
-    unit: "cup",
     units: [
       { id: "8", unit: "cup" },
       { id: "7", unit: "ml" },
@@ -85,7 +76,6 @@ const dummyItems: ItemSelection[] = [
   {
     id: "item-10",
     item_name: "Potatoes",
-    unit: "piece",
     units: [
       { id: "11", unit: "piece" },
       { id: "1", unit: "kg" },
@@ -94,7 +84,6 @@ const dummyItems: ItemSelection[] = [
   {
     id: "item-11",
     item_name: "Salt",
-    unit: "teaspoon",
     units: [
       { id: "10", unit: "tsp" },
       { id: "2", unit: "g" },
@@ -103,7 +92,6 @@ const dummyItems: ItemSelection[] = [
   {
     id: "item-12",
     item_name: "Oil",
-    unit: "cup",
     units: [
       { id: "8", unit: "cup" },
       { id: "7", unit: "ml" },
@@ -112,7 +100,6 @@ const dummyItems: ItemSelection[] = [
   {
     id: "item-13",
     item_name: "Grill Seasoning",
-    unit: "teaspoon",
     units: [
       { id: "10", unit: "tsp" },
       { id: "2", unit: "g" },
@@ -121,7 +108,6 @@ const dummyItems: ItemSelection[] = [
   {
     id: "item-14",
     item_name: "Salmon Fillet",
-    unit: "piece",
     units: [
       { id: "11", unit: "piece" },
       { id: "1", unit: "kg" },
@@ -130,7 +116,6 @@ const dummyItems: ItemSelection[] = [
   {
     id: "item-15",
     item_name: "Mentai Sauce",
-    unit: "cup",
     units: [
       { id: "8", unit: "cup" },
       { id: "7", unit: "ml" },
@@ -333,7 +318,7 @@ const dummyAddNewItemForMeal = (
   const generatedId = `${mealId}-item-${itemCount}`;
   return {
     id: generatedId,
-    item_selection_id: { id: "XXX", item_name: "", unit: "", units: [] },
+    item_selection_id: { id: "XXX", item_name: "", units: [] },
     quantity: null,
     unit: { id: "XXX", unit: "" },
   };
