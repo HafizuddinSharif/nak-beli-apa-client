@@ -58,20 +58,40 @@ export default function Meals() {
       {/* Page title */}
       <PageTitle title="Lihat menu" />
 
+      {mealList.length == 0 && (
+        <View
+          style={{
+            height: "100%",
+            justifyContent: "center",
+            paddingBottom: 100,
+          }}
+        >
+          <Text
+            style={{ textAlign: "center", color: COLORS.gray2, fontSize: 16 }}
+          >
+            Senarai masakan kosong. Boleh tambah baru
+          </Text>
+        </View>
+      )}
+
       {/* Search bar */}
-      <SearchBar value={searchInput} handleChange={handleChange} />
+      {mealList.length > 0 && (
+        <SearchBar value={searchInput} handleChange={handleChange} />
+      )}
 
       {/* List of meals */}
-      <FlatList
-        data={mealList}
-        renderItem={({ index, item }) => {
-          return <MealItem handlePress={goToViewMealPage} item={item} />;
-        }}
-        numColumns={2}
-        columnWrapperStyle={{ columnGap: 10 }}
-        keyExtractor={({ id }: MealSelection) => id}
-        ItemSeparatorComponent={() => <View style={{ height: 10 }}></View>}
-      />
+      {mealList.length > 0 && (
+        <FlatList
+          data={mealList}
+          renderItem={({ index, item }) => {
+            return <MealItem handlePress={goToViewMealPage} item={item} />;
+          }}
+          numColumns={2}
+          columnWrapperStyle={{ columnGap: 10 }}
+          keyExtractor={({ id }: MealSelection) => id}
+          ItemSeparatorComponent={() => <View style={{ height: 10 }}></View>}
+        />
+      )}
     </SafeAreaView>
   );
 }

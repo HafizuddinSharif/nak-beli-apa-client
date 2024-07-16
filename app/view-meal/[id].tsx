@@ -16,7 +16,7 @@ export default function ViewMealPage(): any {
   const params = useLocalSearchParams();
   const router = useRouter();
 
-  const { mealList } = useMealListStore();
+  const { mealList, removeMeal } = useMealListStore();
 
   const [meal, setMeal] = useState(
     mealList.find((item) => item.id === params.id)
@@ -34,6 +34,11 @@ export default function ViewMealPage(): any {
     router.push(`/edit-meal/${params.id}`);
   };
 
+  const onDeleteMeal = () => {
+    removeMeal(meal.id);
+    router.back();
+  };
+
   return (
     <SafeAreaView
       style={{
@@ -49,9 +54,18 @@ export default function ViewMealPage(): any {
           headerTitle: "",
           headerBackTitle: "Lihat semula menu",
           headerRight: () => (
-            <TouchableOpacity onPress={goToEditMealPage}>
-              <Ionicons name="create-outline" size={30} color={COLORS.black} />
-            </TouchableOpacity>
+            <View style={{ flexDirection: "row", columnGap: 10 }}>
+              <TouchableOpacity onPress={goToEditMealPage}>
+                <Ionicons
+                  name="create-outline"
+                  size={30}
+                  color={COLORS.black}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={onDeleteMeal}>
+                <Ionicons name="trash-outline" size={30} color={COLORS.black} />
+              </TouchableOpacity>
+            </View>
           ),
         }}
       />
