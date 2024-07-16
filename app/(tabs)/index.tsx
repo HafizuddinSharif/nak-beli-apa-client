@@ -14,12 +14,18 @@ import { Entypo, Ionicons } from "@expo/vector-icons";
 import { COLORS } from "@/constants";
 import useBasketStore from "@/hooks/useBasketStore";
 import useChecklistStore from "@/hooks/useChecklistStore";
+import {
+  SQLiteProvider,
+  useSQLiteContext,
+  type SQLiteDatabase,
+} from "expo-sqlite";
 
 export default function Index() {
   const { fetchItemOptions, fetchUnitOptions, fetchUnitList, fetchItemList } =
     useContentStore();
   const { fetchSelectedMeals } = useBasketStore();
   const { checklist } = useChecklistStore();
+  const db = useSQLiteContext();
 
   // Get all the needed contents
   useEffect(() => {
@@ -28,6 +34,19 @@ export default function Index() {
     fetchSelectedMeals();
     fetchUnitList();
     fetchItemList();
+
+    // Create tables when the app starts
+    const getAllUnit = async () => {
+      const result = await db.getAllAsync("SELECT * from units;");
+      if (result.length > 0) {
+        console.log(result);
+        const unit = "unit6";
+        // await db.runAsync(`INSERT INTO units (unit) VALUES (?)`, unit);
+      } else {
+        console.log("Table is empty");
+      }
+    };
+    getAllUnit();
   }, []);
 
   const router = useRouter();
