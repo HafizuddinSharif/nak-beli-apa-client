@@ -1,4 +1,6 @@
+import { DB } from "@/db/db";
 import { dummyItems, dummyUnits } from "@/dummy_data";
+import { useSQLiteContext } from "expo-sqlite";
 import { create } from "zustand";
 
 const convertToDropdownOption = (list: any): DropdownOption[] => {
@@ -26,17 +28,21 @@ const useContentStore: any = create((set: any) => ({
   itemOptions: [] as DropdownOption[],
   itemList: [] as ItemSelection[],
   unitList: [] as Unit[],
-  fetchUnitOptions: () => fetchUnitOptions(set),
+  fetchUnitOptions: (payload) => fetchUnitOptions(set, payload),
   fetchItemOptions: () => fetchItemOptions(set),
   fetchItemList: () => fetchItemList(set),
-  fetchUnitList: () => fetchUnitList(set),
+  fetchUnitList: (payload) => fetchUnitList(set, payload),
 }));
 
 export default useContentStore;
 
-const fetchUnitOptions = (set: any) => {
+const fetchUnitOptions = (set: any, payload: any) => {
   // fetch from BE should be done here
-  const dropdownOption = convertToDropdownOption(dummyUnits);
+  // const result = await DB.getAllUnitTables(db2);
+  // console.log("Yeeted here", result);
+  // const dropdownOption = convertToDropdownOption(result);
+  const dropdownOption = convertToDropdownOption(payload);
+  console.log("DROPDOWN HERE: ", dropdownOption);
 
   set(() => {
     return {
@@ -64,10 +70,12 @@ const fetchItemList = (set: any) => {
   });
 };
 
-const fetchUnitList = (set: any) => {
+const fetchUnitList = (set: any, payload: any) => {
+  console.log("FETCH UNIT: ", payload);
   set(() => {
     return {
-      unitList: dummyUnits,
+      unitList: payload,
+      // unitList: result,
     };
   });
 };

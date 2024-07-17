@@ -1,21 +1,8 @@
 import { COLORS } from "@/constants";
+import { initializeDb } from "@/db/db";
 import { Ionicons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import { SQLiteProvider } from "expo-sqlite";
-
-const initializeDb = async (db) => {
-  try {
-    await db.execAsync(`
-      CREATE TABLE IF NOT EXISTS units (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        unit VARCHAR(15)
-      );
-    `);
-    console.log("Database created");
-  } catch (error) {
-    console.error("Error creating tables:", error);
-  }
-};
 
 export default function TabLayout() {
   return (

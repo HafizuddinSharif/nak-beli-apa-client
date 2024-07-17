@@ -19,6 +19,7 @@ import {
   useSQLiteContext,
   type SQLiteDatabase,
 } from "expo-sqlite";
+import { DB } from "@/db/db";
 
 export default function Index() {
   const { fetchItemOptions, fetchUnitOptions, fetchUnitList, fetchItemList } =
@@ -30,23 +31,14 @@ export default function Index() {
   // Get all the needed contents
   useEffect(() => {
     fetchItemOptions();
-    fetchUnitOptions();
     fetchSelectedMeals();
-    fetchUnitList();
+
     fetchItemList();
 
-    // Create tables when the app starts
-    const getAllUnit = async () => {
-      const result = await db.getAllAsync("SELECT * from units;");
-      if (result.length > 0) {
-        console.log(result);
-        const unit = "unit6";
-        // await db.runAsync(`INSERT INTO units (unit) VALUES (?)`, unit);
-      } else {
-        console.log("Table is empty");
-      }
-    };
-    getAllUnit();
+    DB.getAllUnitTables(db).then((item) => {
+      fetchUnitList(item);
+      fetchUnitOptions(item);
+    });
   }, []);
 
   const router = useRouter();
