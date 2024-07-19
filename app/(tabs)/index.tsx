@@ -33,11 +33,15 @@ export default function Index() {
     fetchItemOptions();
     fetchSelectedMeals();
 
-    fetchItemList();
+    // fetchItemList();
 
     DB.getAllUnitTables(db).then((item) => {
       fetchUnitList(item);
       fetchUnitOptions(item);
+    });
+
+    DB.getAllItemSelectionTable(db).then((item) => {
+      fetchItemList(item);
     });
   }, []);
 
