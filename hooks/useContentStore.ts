@@ -29,7 +29,7 @@ const useContentStore: any = create((set: any) => ({
   itemList: [] as ItemSelection[],
   unitList: [] as Unit[],
   fetchUnitOptions: (payload) => fetchUnitOptions(set, payload),
-  fetchItemOptions: () => fetchItemOptions(set),
+  fetchItemOptions: (payload) => fetchItemOptions(set, payload),
   fetchItemList: (payload) => fetchItemList(set, payload),
   fetchUnitList: (payload) => fetchUnitList(set, payload),
 }));
@@ -42,7 +42,7 @@ const fetchUnitOptions = (set: any, payload: any) => {
   // console.log("Yeeted here", result);
   // const dropdownOption = convertToDropdownOption(result);
   const dropdownOption = convertToDropdownOption(payload);
-  console.log("DROPDOWN HERE: ", dropdownOption.length);
+  // console.log("DROPDOWN HERE: ", dropdownOption.length);
 
   set(() => {
     return {
@@ -51,9 +51,9 @@ const fetchUnitOptions = (set: any, payload: any) => {
   });
 };
 
-const fetchItemOptions = (set: any) => {
+const fetchItemOptions = (set: any, payload: any) => {
   // fetch from BE should be done here
-  const dropdownOption = convertToDropdownOption(dummyItems);
+  const dropdownOption = convertToDropdownOption(payload);
 
   set(() => {
     return {
