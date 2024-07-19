@@ -75,7 +75,6 @@ const AddNewIngredient = ({
       (elem) => elem.id === itemIdValue
     ) as ItemSelection;
     const newUnitOptions = convertToDropdownOption(itemObj.units);
-    console.log(newUnitOptions);
     setUnitOptions(newUnitOptions);
     setItemSelection(itemObj);
     const editItem = {
@@ -88,9 +87,7 @@ const AddNewIngredient = ({
   };
 
   const onChangeUnit = (unitValue: string) => {
-    console.log(unitValue);
     const unitObj = unitList.find((elem) => elem.unit === unitValue) as Unit;
-    console.log(unitObj);
     setItemUnit(unitObj);
     const editItem = {
       id: item.id,
