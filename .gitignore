@@ -186,3 +186,5 @@ vendor/
 /android
 
 /ios
+
+db.sql
