@@ -20,28 +20,37 @@ import {
   type SQLiteDatabase,
 } from "expo-sqlite";
 import { DB } from "@/db/db";
+import useMealListStore from "@/hooks/useMealListStore";
 
 export default function Index() {
-  const { fetchItemOptions, fetchUnitOptions, fetchUnitList, fetchItemList } =
-    useContentStore();
+  const {
+    fetchItemOptions,
+    fetchUnitOptions,
+    fetchUnitList,
+    fetchItemList,
+    itemList,
+  } = useContentStore();
   const { fetchSelectedMeals } = useBasketStore();
   const { checklist } = useChecklistStore();
+  const { fetchMealList } = useMealListStore();
   const db = useSQLiteContext();
 
   // Get all the needed contents
   useEffect(() => {
-    fetchItemOptions();
     fetchSelectedMeals();
-
-    // fetchItemList();
 
     DB.getAllUnitTables(db).then((item) => {
       fetchUnitList(item);
       fetchUnitOptions(item);
-    });
 
-    DB.getAllItemSelectionTable(db).then((item) => {
-      fetchItemList(item);
+      DB.getAllItemSelectionTable(db).then((itemSelections) => {
+        fetchItemList(itemSelections);
+        fetchItemOptions(itemSelections);
+
+        DB.getAllMealSelectionTable(db, itemList).then((mealSelections) => {
+          fetchMealList(mealSelections);
+        });
+      });
     });
   }, []);
 
@@ -64,6 +73,18 @@ export default function Index() {
         }
       })
     );
+  };
+
+  const runScript = () => {
+    // DB.runDBScript(db);
+    // DB.getAllMealSelectionTable(db, itemList);
+    // DB.getAllUnitTables(db).then((item) => {
+    //   fetchUnitList(item);
+    //   fetchUnitOptions(item);
+    // });
+    // DB.getAllItemSelectionTable(db).then((item) => {
+    //   fetchItemList(item);
+    // });
   };
 
   const EmptyChecklistRender = () => {
@@ -132,6 +153,17 @@ export default function Index() {
           ),
         }}
       />
+
+      <TouchableOpacity
+        style={{
+          backgroundColor: COLORS.green,
+          padding: 10,
+          shadowOffset: { width: 2, height: 2 },
+        }}
+        onPress={runScript}
+      >
+        <Text style={{ color: COLORS.white }}>Run SQL Script</Text>
+      </TouchableOpacity>
 
       {groceryList.length == 0 && <EmptyChecklistRender />}
       {groceryList.length > 0 && <ExistChecklistRender />}

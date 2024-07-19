@@ -27,7 +27,7 @@ export default function EditMealPage() {
   const { mealList, addNewMeal } = useMealListStore();
   const [meal, setMeal] = useState(
     params.id !== "new"
-      ? dummyMeals.find((item) => item.id === params.id)
+      ? mealList.find((item) => item.id === params.id)
       : dummyAddNewMeal
   );
 

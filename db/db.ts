@@ -32,7 +32,16 @@ const DB = {
   initializeDb: (db) => initializeDb,
   getAllUnitTables: (db) => getAllUnitTables(db),
   getAllItemSelectionTable: (db) => getAllItemSelectionTable(db),
+  getAllMealSelectionTable: (db, itemSelections) =>
+    getAllMealSelectionTable(db, itemSelections),
   insertIntoUnits: (db, unitName) => insertIntoUnits(db, unitName),
+  runDBScript: (db) => runDBScript(db),
+};
+
+const runDBScript = async (db) => {
+  console.log("Running custom DB script");
+  const result = await db.getAllAsync("SELECT * from units");
+  console.log(result);
 };
 
 const getAllUnitTables = async (db) => {
@@ -45,12 +54,54 @@ const getAllUnitTables = async (db) => {
   }
 };
 
+const getAllMealSelectionTable = async (
+  db,
+  itemSelections: ItemSelection[]
+) => {
+  const mealSelections = await db.getAllAsync("SELECT * from meal_selections;");
+  const mealItems =
+    await db.getAllAsync(`SELECT mi.id, mi.meal_id, mi.item_selection_id, mi.quantity, u.id as unit_id, u.unit
+            FROM meal_items mi
+            JOIN units u ON mi.unit_id = u.id;`);
+
+  const mealSelectionList: MealSelection[] = [];
+
+  mealSelections.forEach((elem) => {
+    // console.log("FOR:", elem.meal_name);
+    const mealItemSpecific = mealItems.filter((e) => e.meal_id === elem.id);
+    // console.log(mealItemSpecific);
+    const mealItemList = [];
+    mealItemSpecific.forEach((item) => {
+      const itemToAdd: ItemForMeal = {
+        id: item.id,
+        item_selection_id: itemSelections.find(
+          (itemS) => itemS.id === item.item_selection_id
+        ),
+        quantity: item.quantity,
+        unit: item.unit,
+      };
+      mealItemList.push(itemToAdd);
+    });
+    const mealObj: MealSelection = {
+      id: elem.id,
+      meal_name: elem.meal_name,
+      description: elem.description,
+      cooking_guide: elem.cooking_guide,
+      item_list: mealItemList,
+    };
+    mealSelectionList.push(mealObj);
+  });
+
+  console.log("MEAL SQL:", mealSelectionList[0]);
+  return mealSelectionList;
+};
+
 const insertIntoUnits = async (db, unitName) => {
   await db.runAsync(`INSERT INTO units (unit) VALUES (?)`, unitName);
   console.log(`New entry is added ${unitName}`);
 };
 
-const getAllItemSelectionTable = async (db) => {
+const getAllItemSelectionTable = async (db: any) => {
   const itemSelections: any[] = await db.getAllAsync(
     "SELECT * from item_selections;"
   );
@@ -69,7 +120,7 @@ const getAllItemSelectionTable = async (db) => {
     return returnUnits;
   };
 
-  const itemSelectionList = [];
+  const itemSelectionList: ItemSelection[] = [];
   itemSelections.forEach((elem) => {
     const newItem: ItemSelection = {
       id: elem.id,
