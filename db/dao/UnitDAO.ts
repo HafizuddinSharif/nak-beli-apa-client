@@ -1,4 +1,4 @@
-interface Unit {
+interface UnitDAO {
   id: number;
   unit: string;
 }
