@@ -1,25 +1,21 @@
 // db.js
 import * as SQLite from "expo-sqlite";
 
-// const db2 = await SQLite.openDatabaseAsync("nakbeliapa2.db");
+// const dbConnection = await SQLite.openDatabaseAsync("nakbeliapa2.db");
+
+const DB = {
+  initializeDb: (db) => initializeDb,
+  insertIntoUnits: (db, unitName) => insertIntoUnits(db, unitName),
+  getDataFromDB: (db) => getDataFromDB(db),
+  runDBScript: (db) => runDBScript(db),
+  insertNewMeal: (db, newMeal) => insertNewMeal(db, newMeal),
+};
 
 // To initialize the db upon start-up
 const initializeDb = async (db) => {
-  // console.log("SCRIPT", onInitialSetupDBScript);
   const yeet = onInitialSetupDBScript.split(";");
-  yeet.forEach((line, i) => {
-    console.log("SCRIPT", i, line);
-  });
   try {
-    await db.execAsync(`
-        CREATE TABLE IF NOT EXISTS units (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          unit VARCHAR(15)
-        );
-      `);
-
     yeet.forEach(async (line, i) => {
-      console.log("Running script", i);
       await db.execAsync(line + ";");
     });
     console.log("Database created");
@@ -28,26 +24,27 @@ const initializeDb = async (db) => {
   }
 };
 
-const DB = {
-  initializeDb: (db) => initializeDb,
-  getAllUnitTables: (db) => getAllUnitTables(db),
-  getAllItemSelectionTable: (db) => getAllItemSelectionTable(db),
-  getAllMealSelectionTable: (db, itemSelections) =>
-    getAllMealSelectionTable(db, itemSelections),
-  insertIntoUnits: (db, unitName) => insertIntoUnits(db, unitName),
-  runDBScript: (db) => runDBScript(db),
-};
-
 const runDBScript = async (db) => {
   console.log("Running custom DB script");
-  const result = await db.getAllAsync("SELECT * from units");
+  const result = await db.getAllAsync("SELECT * from meal_items");
   console.log(result);
 };
 
-const getAllUnitTables = async (db) => {
-  const result = await db.getAllAsync("SELECT * from units;");
+const getDataFromDB = async (db) => {
+  const unitsData: UnitDAO[] = await getAllUnitTables(db);
+  const itemSelectionsData = await getAllItemSelectionTable(db, unitsData);
+  const mealSelectionsData = await getAllMealSelectionTable(
+    db,
+    itemSelectionsData,
+    unitsData
+  );
+
+  return { unitsData, itemSelectionsData, mealSelectionsData };
+};
+
+const getAllUnitTables = async (db): Promise<UnitDAO[]> => {
+  const result: UnitDAO[] = await db.getAllAsync("SELECT * from units;");
   if (result.length > 0) {
-    console.log(result);
     return result;
   } else {
     console.log("Table is empty");
@@ -56,10 +53,13 @@ const getAllUnitTables = async (db) => {
 
 const getAllMealSelectionTable = async (
   db,
-  itemSelections: ItemSelection[]
+  itemSelections: ItemSelection[],
+  units: UnitDAO[]
 ) => {
-  const mealSelections = await db.getAllAsync("SELECT * from meal_selections;");
-  const mealItems =
+  const mealSelections: MealSelectionDAO[] = await db.getAllAsync(
+    "SELECT * from meal_selections;"
+  );
+  const mealItems: (MealItemDAO & { unit_id: number; unit: string })[] =
     await db.getAllAsync(`SELECT mi.id, mi.meal_id, mi.item_selection_id, mi.quantity, u.id as unit_id, u.unit
             FROM meal_items mi
             JOIN units u ON mi.unit_id = u.id;`);
@@ -67,19 +67,20 @@ const getAllMealSelectionTable = async (
   const mealSelectionList: MealSelection[] = [];
 
   mealSelections.forEach((elem) => {
-    // console.log("FOR:", elem.meal_name);
     const mealItemSpecific = mealItems.filter((e) => e.meal_id === elem.id);
-    // console.log(mealItemSpecific);
     const mealItemList = [];
     mealItemSpecific.forEach((item) => {
+      const yesh = itemSelections.find(
+        (itemS) => itemS.id === item.item_selection_id
+      );
+      const foundUnitDAO = units.find((y) => y.id === item.unit_id) as Unit;
       const itemToAdd: ItemForMeal = {
         id: item.id,
-        item_selection_id: itemSelections.find(
-          (itemS) => itemS.id === item.item_selection_id
-        ),
+        item_selection_id: yesh,
         quantity: item.quantity,
-        unit: item.unit,
+        unit: foundUnitDAO,
       };
+
       mealItemList.push(itemToAdd);
     });
     const mealObj: MealSelection = {
@@ -92,23 +93,23 @@ const getAllMealSelectionTable = async (
     mealSelectionList.push(mealObj);
   });
 
-  console.log("MEAL SQL:", mealSelectionList[0]);
   return mealSelectionList;
 };
+
+const insertNewMeal = async (db, newMeal: MealSelection) => {};
 
 const insertIntoUnits = async (db, unitName) => {
   await db.runAsync(`INSERT INTO units (unit) VALUES (?)`, unitName);
   console.log(`New entry is added ${unitName}`);
 };
 
-const getAllItemSelectionTable = async (db: any) => {
-  const itemSelections: any[] = await db.getAllAsync(
+const getAllItemSelectionTable = async (db: any, units) => {
+  const itemSelections: ItemSelectionDAO[] = await db.getAllAsync(
     "SELECT * from item_selections;"
   );
-  const itemUnits: any[] = await db.getAllAsync("SELECT * from item_units;");
-  const units: any[] = await db.getAllAsync("SELECT * from units;");
-  console.log("Item total:", itemSelections.length);
-  // console.log(itemSelections);
+  const itemUnits: ItemUnitDAO[] = await db.getAllAsync(
+    "SELECT * from item_units;"
+  );
 
   const getUnits = (itemId) => {
     const returnUnits = [];
@@ -235,23 +236,29 @@ INSERT OR IGNORE INTO meal_selections (id, meal_name, description, cooking_guide
 (6, 'Salmon mentai', 'Delicious salmon topped with creamy mentai sauce, broiled to perfection.', '');
 
 INSERT OR IGNORE INTO meal_items (id, meal_id, item_selection_id, quantity, unit_id) VALUES
-(1, 1, 1, 1, 11),
-(2, 1, 2, 2, 9),
-(3, 2, 3, 1, 8),
-(4, 2, 4, 1, 9),
-(5, 2, 5, 1, 9),
-(6, 2, 6, 1, 11),
-(7, 3, 7, 1, 1),
-(8, 3, 8, 1, 9),
-(9, 3, 9, 2, 8),
-(10, 4, 10, 2, 11),
-(11, 4, 11, 1, 10),
-(12, 4, 12, 1, 8),
-(13, 5, 7, 1, 1),
-(14, 5, 13, 1, 9),
-(15, 6, 14, 1, 11),
-(16, 6, 15, 1, 9);
+(1, 1, 1, 1, 11),  
+(2, 1, 2, 3, 9),    
+(3, 2, 3, 2, 8),    
+(4, 2, 4, 4, 9),  
+(5, 2, 5, 3, 9),    
+(6, 2, 6, 2, 11),   
+(7, 3, 7, 1, 1),    
+(8, 3, 8, 2, 9),    
+(9, 3, 9, 2, 8), 
+(10, 4, 10, 3, 11),
+(11, 4, 11, 1, 10), 
+(12, 4, 12, 1, 8),   
+(13, 5, 7, 1, 1),    
+(14, 5, 13, 2, 9),   
+(15, 6, 14, 2, 11),  
+(16, 6, 15, 3, 9);   
 `;
 
 // Export the database connection and utility functions
-export { DB, insertIntoUnits, initializeDb, onInitialSetupDBScript };
+export {
+  DB,
+  // dbConnection,
+  insertIntoUnits,
+  initializeDb,
+  onInitialSetupDBScript,
+};
