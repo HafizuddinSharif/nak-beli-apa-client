@@ -1,6 +1,5 @@
 import { SafeAreaView, View, TouchableOpacity, Text } from "react-native";
 import { Stack, useRouter, useLocalSearchParams } from "expo-router";
-import { dummyMeals } from "@/dummy_data";
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS } from "@/constants";
 import PageTitle from "@/components/common/PageTitle";
@@ -19,7 +18,7 @@ export default function ViewMealPage(): any {
   const { mealList, removeMeal } = useMealListStore();
 
   const [meal, setMeal] = useState(
-    mealList.find((item) => item.id === params.id)
+    mealList.find((item: MealSelection) => item.id.toString() === params.id)
   );
 
   // set states

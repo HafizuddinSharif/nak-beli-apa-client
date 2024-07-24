@@ -19,7 +19,7 @@ const convertToDropdownOption = (list: any): DropdownOption[] => {
   list.forEach((elem) => {
     if ("unit" in elem && !("item_name" in elem)) {
       // elem is a Unit
-      options.push({ value: elem.unit, label: elem.unit });
+      options.push({ value: elem.id, label: elem.unit });
     } else if ("item_name" in elem) {
       // elem is an ItemSelection
       elem = elem as ItemSelection;
@@ -72,7 +72,7 @@ const AddNewIngredient = ({
   const onChangeItem = (itemIdValue: string) => {
     setItemUnit(null);
     const itemObj = itemList.find(
-      (elem) => elem.id === itemIdValue
+      (elem) => elem.id === parseInt(itemIdValue)
     ) as ItemSelection;
     const newUnitOptions = convertToDropdownOption(itemObj.units);
     setUnitOptions(newUnitOptions);
@@ -87,7 +87,10 @@ const AddNewIngredient = ({
   };
 
   const onChangeUnit = (unitValue: string) => {
-    const unitObj = unitList.find((elem) => elem.unit === unitValue) as Unit;
+    const itemUnitList = itemSelection.units;
+    const unitObj = itemUnitList.find(
+      (elem) => elem.id === parseInt(unitValue)
+    ) as Unit;
     setItemUnit(unitObj);
     const editItem = {
       id: item.id,
@@ -168,7 +171,7 @@ const AddNewIngredient = ({
         <View style={{ flex: 1 }}>
           <DropdownInput
             placeholder="Unit"
-            selectedValue={itemUnit}
+            selectedValue={itemUnit ? itemUnit.id : ""}
             option={unitOptions}
             onChange={onChangeUnit}
           />

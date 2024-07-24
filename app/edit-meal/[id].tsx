@@ -3,16 +3,13 @@ import AddNewIngredientBtn from "@/components/add-new-meal-page/AddNewIngredient
 import BackModal from "@/components/common/BackModal";
 import PageSubHeading from "@/components/common/PageSubHeading";
 import PageTitle from "@/components/common/PageTitle";
-import PrimaryBtn from "@/components/common/PrimaryBtn";
 import { COLORS, TEXT } from "@/constants";
-import {
-  dummyAddNewItemForMeal,
-  dummyAddNewMeal,
-  dummyMeals,
-} from "@/dummy_data";
+import { DB } from "@/db/db";
+import { dummyAddNewItemForMeal, dummyAddNewMeal } from "@/dummy_data";
 import useMealListStore from "@/hooks/useMealListStore";
 import { Ionicons } from "@expo/vector-icons";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { useSQLiteContext } from "expo-sqlite";
 import React, { useState } from "react";
 import {
   FlatList,
@@ -23,14 +20,14 @@ import {
 } from "react-native";
 
 export default function EditMealPage() {
+  const db = useSQLiteContext();
   const params = useLocalSearchParams();
-  const { mealList, addNewMeal } = useMealListStore();
+  const { mealList, addNewMeal, updateMeal } = useMealListStore();
   const [meal, setMeal] = useState(
     params.id !== "new"
-      ? mealList.find((item) => item.id === params.id)
+      ? mealList.find((item) => item.id.toString() === params.id)
       : dummyAddNewMeal
   );
-
   const [currCount, setCurrCount] = useState(meal?.item_list.length);
   const [menuName, setMenuName] = useState(meal?.meal_name);
   const [ingredientList, setIngredientList] = useState(
@@ -74,15 +71,32 @@ export default function EditMealPage() {
   };
 
   const onSaveMeal = () => {
-    const newMeal = {
-      id: `meal-${mealList.length + 1}`,
-      meal_name: menuName,
-      description: "A new meal description",
-      item_list: ingredientList,
-      cooking_guide: `This is the guide for ${menuName}`,
-    } as MealSelection;
+    if (meal.id === null) {
+      const newMeal = {
+        id: mealList.length + 1,
+        meal_name: menuName,
+        description: "A new meal description",
+        item_list: ingredientList,
+        cooking_guide: `This is the guide for ${menuName}`,
+      } as MealSelection;
 
-    addNewMeal(newMeal);
+      console.log("🍏 SAVE NEW MEAL:", newMeal);
+      addNewMeal(newMeal);
+      DB.insertNewMeal(db, newMeal);
+    } else {
+      const newMeal = {
+        id: meal.id,
+        meal_name: menuName,
+        description: "A new meal description. This also have been updated",
+        item_list: ingredientList,
+        cooking_guide: `This is the guide for ${menuName}`,
+      } as MealSelection;
+
+      console.log("🍎 UPDATE MEAL:", newMeal);
+      updateMeal(newMeal);
+      DB.insertNewMeal(db, newMeal);
+    }
+
     router.push(`/meals`);
   };
 

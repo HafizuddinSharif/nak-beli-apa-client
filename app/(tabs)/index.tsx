@@ -14,44 +14,34 @@ import { Entypo, Ionicons } from "@expo/vector-icons";
 import { COLORS } from "@/constants";
 import useBasketStore from "@/hooks/useBasketStore";
 import useChecklistStore from "@/hooks/useChecklistStore";
-import {
-  SQLiteProvider,
-  useSQLiteContext,
-  type SQLiteDatabase,
-} from "expo-sqlite";
+import { useSQLiteContext } from "expo-sqlite";
 import { DB } from "@/db/db";
 import useMealListStore from "@/hooks/useMealListStore";
 
 export default function Index() {
-  const {
-    fetchItemOptions,
-    fetchUnitOptions,
-    fetchUnitList,
-    fetchItemList,
-    itemList,
-  } = useContentStore();
+  const { fetchItemOptions, fetchUnitOptions, fetchUnitList, fetchItemList } =
+    useContentStore();
   const { fetchSelectedMeals } = useBasketStore();
   const { checklist } = useChecklistStore();
-  const { fetchMealList } = useMealListStore();
+  const { fetchMealList, mealList } = useMealListStore();
   const db = useSQLiteContext();
 
   // Get all the needed contents
   useEffect(() => {
     fetchSelectedMeals();
 
-    DB.getAllUnitTables(db).then((item) => {
-      fetchUnitList(item);
-      fetchUnitOptions(item);
-
-      DB.getAllItemSelectionTable(db).then((itemSelections) => {
-        fetchItemList(itemSelections);
-        fetchItemOptions(itemSelections);
-
-        DB.getAllMealSelectionTable(db, itemList).then((mealSelections) => {
-          fetchMealList(mealSelections);
-        });
-      });
-    });
+    if (mealList.length === 0) {
+      console.log("Fetching App data...");
+      DB.getDataFromDB(db).then(
+        ({ unitsData, itemSelectionsData, mealSelectionsData }) => {
+          fetchUnitList(unitsData);
+          fetchUnitOptions(unitsData);
+          fetchItemList(itemSelectionsData);
+          fetchItemOptions(itemSelectionsData);
+          fetchMealList(mealSelectionsData);
+        }
+      );
+    }
   }, []);
 
   const router = useRouter();
@@ -76,15 +66,7 @@ export default function Index() {
   };
 
   const runScript = () => {
-    // DB.runDBScript(db);
-    // DB.getAllMealSelectionTable(db, itemList);
-    // DB.getAllUnitTables(db).then((item) => {
-    //   fetchUnitList(item);
-    //   fetchUnitOptions(item);
-    // });
-    // DB.getAllItemSelectionTable(db).then((item) => {
-    //   fetchItemList(item);
-    // });
+    DB.runDBScript(db);
   };
 
   const EmptyChecklistRender = () => {
