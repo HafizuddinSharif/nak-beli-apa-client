@@ -1,6 +1,4 @@
 import { DB } from "@/db/db";
-import { dummyItems, dummyUnits } from "@/dummy_data";
-import { useSQLiteContext } from "expo-sqlite";
 import { create } from "zustand";
 
 const convertToDropdownOption = (list: any): DropdownOption[] => {
