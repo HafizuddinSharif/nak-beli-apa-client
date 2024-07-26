@@ -84,7 +84,7 @@ export default function EditMealPage() {
       addNewMeal(newMeal);
       DB.insertNewMeal(db, newMeal);
     } else {
-      const newMeal = {
+      const updatedMeal = {
         id: meal.id,
         meal_name: menuName,
         description: "A new meal description. This also have been updated",
@@ -92,9 +92,9 @@ export default function EditMealPage() {
         cooking_guide: `This is the guide for ${menuName}`,
       } as MealSelection;
 
-      console.log("🍎 UPDATE MEAL:", newMeal);
-      updateMeal(newMeal);
-      DB.insertNewMeal(db, newMeal);
+      console.log("🍎 UPDATE MEAL:", updatedMeal);
+      updateMeal(updatedMeal);
+      DB.updateMeal(db, updatedMeal);
     }
 
     router.push(`/meals`);
