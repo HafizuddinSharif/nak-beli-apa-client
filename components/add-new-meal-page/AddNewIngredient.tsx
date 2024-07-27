@@ -128,7 +128,7 @@ const AddNewIngredient = ({
         }}
       >
         {/* For item selection */}
-        <View style={{ flex: 2 }}>
+        <View style={{ flex: 3 }}>
           <DropdownInput
             placeholder="Nama bahan"
             selectedValue={itemSelection.id}
@@ -147,7 +147,7 @@ const AddNewIngredient = ({
         {/* For quantity field */}
         <View style={{ flex: 1, justifyContent: "center" }}>
           <TextInput
-            placeholder="Kuantiti"
+            placeholder="0"
             placeholderTextColor={COLORS.gray2}
             style={{
               fontSize: 14,
@@ -168,7 +168,7 @@ const AddNewIngredient = ({
           }}
         ></View>
         {/* For unit selection */}
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 2 }}>
           <DropdownInput
             placeholder="Unit"
             selectedValue={itemUnit ? itemUnit.id : ""}

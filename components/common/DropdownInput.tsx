@@ -1,5 +1,4 @@
 import { COLORS } from "@/constants";
-import { AntDesign } from "@expo/vector-icons";
 import { useState } from "react";
 import { StyleSheet, Text } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
@@ -30,6 +29,7 @@ const DropdownInput = ({
 
   return (
     <Dropdown
+      itemTextStyle={{ fontSize: 14 }}
       style={[styles.dropdown, isFocus && { borderColor: "blue" }]}
       placeholderStyle={styles.placeholderStyle}
       selectedTextStyle={styles.selectedTextStyle}
