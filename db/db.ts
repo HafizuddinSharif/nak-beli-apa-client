@@ -15,29 +15,42 @@ const DB = {
 // To initialize the db upon start-up
 const initializeDb = async (db) => {
   const yeet = onInitialSetupDBScript.split(";");
-  try {
-    yeet.forEach(async (line, i) => {
-      await db.execAsync(line + ";");
-    });
-    console.log("Database created");
-  } catch (error) {
-    console.error("Error creating tables:", error);
-  }
+  db.withTransactionAsync(async () => {
+    try {
+      yeet.forEach(async (line, i) => {
+        await db.execAsync(line + ";");
+      });
+      console.log("Database created");
+    } catch (error) {
+      console.error("Error creating tables:", error);
+    }
+  });
 };
 
 const runDBScript = async (db) => {
   console.log("Running custom DB script");
+  // await db.runAsync(resetDB);
 
-  await db.getAllAsync(
-    "DELETE FROM meal_selections WHERE id = 8 or id = 9 or id = 7"
-  );
-  await db.getAllAsync(
-    "DELETE FROM meal_items where meal_id = 8 or meal_id = 9 or meal_id = 7"
-  );
-  const result = await db.getAllAsync("SELECT * FROM meal_selections");
-  const result2 = await db.getAllAsync("SELECT * FROM meal_items");
-  console.log(result);
-  console.log(result2);
+  // const yeet = resetDB.split(";");
+  // try {
+  //   yeet.forEach(async (line, i) => {
+  //     await db.execAsync(line + ";");
+  //   });
+  //   console.log("Database created");
+  // } catch (error) {
+  //   console.error("Error creating tables:", error);
+  // }
+
+  // await db.getAllAsync(
+  //   "DELETE FROM meal_selections WHERE id = 8 or id = 9 or id = 7"
+  // );
+  // await db.getAllAsync(
+  //   "DELETE FROM meal_items where meal_id = 8 or meal_id = 9 or meal_id = 7"
+  // );
+  const result = await db.getAllAsync("SELECT * FROM item_selections");
+  const result2 = await db.getAllAsync("SELECT * FROM units");
+  console.log(result.length);
+  console.log(result2.length);
 };
 
 const getDataFromDB = async (db) => {
@@ -49,6 +62,7 @@ const getDataFromDB = async (db) => {
     unitsData
   );
 
+  // const mealSelectionsData = [];
   return { unitsData, itemSelectionsData, mealSelectionsData };
 };
 
@@ -70,7 +84,7 @@ const getAllMealSelectionTable = async (
     "SELECT * from meal_selections;"
   );
   const mealItems: (MealItemDAO & { unit_id: number; unit: string })[] =
-    await db.getAllAsync(`SELECT mi.id, mi.meal_id, mi.item_selection_id, mi.quantity, u.id as unit_id, u.unit
+    await db.getAllAsync(`SELECT mi.meal_id, mi.item_selection_id, mi.quantity, u.id as unit_id, u.unit
             FROM meal_items mi
             JOIN units u ON mi.unit_id = u.id;`);
 
@@ -124,23 +138,19 @@ const insertNewMeal = async (db: SQLiteDatabase, newMeal: MealSelection) => {
     const getMealItemsLength: any = await db.getAllAsync(
       `SELECT COUNT(*) FROM meal_items;`
     );
-    let generatedId = getMealItemsLength[0]["COUNT(*)"];
     item_list.forEach((item) => {
-      console.log(generatedId);
-      generatedId = generatedId + 1;
-      const scriptLine = `(${generatedId}, ${savedMeal.lastInsertRowId}, ${item.item_selection_id.id}, ${item.quantity}, ${item.unit.id})`;
+      const scriptLine = `(${savedMeal.lastInsertRowId}, ${item.item_selection_id.id}, ${item.quantity}, ${item.unit.id})`;
       prepMealItemsSQLScript.push(scriptLine);
     });
-    const runScript = `INSERT INTO meal_items (id, meal_id, item_selection_id, quantity, unit_id) VALUES ${prepMealItemsSQLScript.join(
+    const runScript = `INSERT INTO meal_items (meal_id, item_selection_id, quantity, unit_id) VALUES ${prepMealItemsSQLScript.join(
       ","
     )};`;
-    console.log("THE SCRIPT:", runScript);
     await db.runAsync(runScript);
   });
-  const rs1 = await db.getAllAsync(`SELECT * from meal_selections;`);
-  const rs2 = await db.getAllAsync(`SELECT * from meal_items;`);
-  console.log("🍏", rs1);
-  console.log("🍟", rs2);
+  // const rs1 = await db.getAllAsync(`SELECT * from meal_selections;`);
+  // const rs2 = await db.getAllAsync(`SELECT * from meal_items;`);
+  // console.log("🍏", rs1);
+  // console.log("🍟", rs2);
 };
 
 const updateMeal = async (db, meal: MealSelection) => {};
@@ -154,26 +164,26 @@ const getAllItemSelectionTable = async (db: any, units) => {
   const itemSelections: ItemSelectionDAO[] = await db.getAllAsync(
     "SELECT * from item_selections;"
   );
-  const itemUnits: ItemUnitDAO[] = await db.getAllAsync(
-    "SELECT * from item_units;"
-  );
+  // const itemUnits: ItemUnitDAO[] = await db.getAllAsync(
+  //   "SELECT * from item_units;"
+  // );
 
-  const getUnits = (itemId) => {
-    const returnUnits = [];
-    const filterItemUnitList = itemUnits.filter((e) => e.item_id === itemId);
-    filterItemUnitList.forEach((elem) => {
-      const foundUnit = units.find((e) => e.id === elem.unit_id);
-      returnUnits.push(foundUnit);
-    });
-    return returnUnits;
-  };
+  // const getUnits = (itemId) => {
+  //   const returnUnits = [];
+  //   const filterItemUnitList = itemUnits.filter((e) => e.item_id === itemId);
+  //   filterItemUnitList.forEach((elem) => {
+  //     const foundUnit = units.find((e) => e.id === elem.unit_id);
+  //     returnUnits.push(foundUnit);
+  //   });
+  //   return returnUnits;
+  // };
 
   const itemSelectionList: ItemSelection[] = [];
   itemSelections.forEach((elem) => {
     const newItem: ItemSelection = {
       id: elem.id,
       item_name: elem.item_name,
-      units: getUnits(elem.id),
+      units: units,
     };
     itemSelectionList.push(newItem);
   });
@@ -181,90 +191,35 @@ const getAllItemSelectionTable = async (db: any, units) => {
   return itemSelectionList;
 };
 
+const resetDB: string = `
+DROP TABLE IF EXISTS meal_selections;
+DROP TABLE IF EXISTS meal_items;
+DROP TABLE IF EXISTS units;
+DROP TABLE IF EXISTS item_selections;
+DROP TABLE IF EXISTS item_units;
+`;
+
 const onInitialSetupDBScript: string = `
-CREATE TABLE IF NOT EXISTS units (
-    id INT PRIMARY KEY,
-    unit VARCHAR(255) NOT NULL
-);
-
-INSERT OR IGNORE INTO units (id, unit) VALUES
-(1, 'kg'),
-(2, 'g'),
-(3, 'mg'),
-(4, 'lb'),
-(5, 'oz'),
-(6, 'l'),
-(7, 'ml'),
-(8, 'cup'),
-(9, 'tbsp'),
-(10, 'tsp'),
-(11, 'piece'),
-(12, 'serving'),
-(13, 'slice'),
-(14, 'pinch'),
-(15, 'dash'),
-(16, 'quart'),
-(17, 'pint'),
-(18, 'gallon'),
-(19, 'cm'),
-(20, 'inch');
-
 CREATE TABLE IF NOT EXISTS item_selections (
-    id INT PRIMARY KEY,
-    item_name VARCHAR(255) NOT NULL
+    id INTEGER PRIMARY KEY,
+    item_name VARCHAR(50) NOT NULL,
+    item_name_malay VARCHAR(50) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS item_units (
-    item_id INT,
-    unit_id INT,
-    PRIMARY KEY (item_id, unit_id),
-    FOREIGN KEY (item_id) REFERENCES item_selections(id),
-    FOREIGN KEY (unit_id) REFERENCES units(id)
+CREATE TABLE IF NOT EXISTS units (
+    id INTEGER PRIMARY KEY,
+    unit VARCHAR(15) NOT NULL,
+    unit_malay VARCHAR(15) NOT NULL
 );
-
-INSERT OR IGNORE INTO item_selections (id, item_name) VALUES
-(1, 'Fish Fillet'),
-(2, 'Red Chili Sauce'),
-(3, 'Coconut Rice'),
-(4, 'Sambal'),
-(5, 'Fried Anchovies'),
-(6, 'Boiled Egg'),
-(7, 'Chicken'),
-(8, 'Turmeric'),
-(9, 'Coconut Milk'),
-(10, 'Potatoes'),
-(11, 'Salt'),
-(12, 'Oil'),
-(13, 'Grill Seasoning'),
-(14, 'Salmon Fillet'),
-(15, 'Mentai Sauce');
-
-INSERT OR IGNORE INTO item_units (item_id, unit_id) VALUES
-(1, 11), (1, 1),
-(2, 8), (2, 7),
-(3, 12), (3, 8),
-(4, 12), (4, 9),
-(5, 12), (5, 9),
-(6, 11), (6, 13),
-(7, 11), (7, 1),
-(8, 10), (8, 2),
-(9, 8), (9, 7),
-(10, 11), (10, 1),
-(11, 10), (11, 2),
-(12, 8), (12, 7),
-(13, 10), (13, 2),
-(14, 11), (14, 1),
-(15, 8), (15, 7);
 
 CREATE TABLE IF NOT EXISTS meal_selections (
-    id INT PRIMARY KEY,
+    id INTEGER PRIMARY KEY,
     meal_name VARCHAR(255) NOT NULL,
     description TEXT NOT NULL,
     cooking_guide TEXT
 );
 
 CREATE TABLE IF NOT EXISTS meal_items (
-    id INT PRIMARY KEY,
     meal_id INT,
     item_selection_id INT,
     quantity INT,
@@ -274,31 +229,157 @@ CREATE TABLE IF NOT EXISTS meal_items (
     FOREIGN KEY (unit_id) REFERENCES units(id)
 );
 
-INSERT OR IGNORE INTO meal_selections (id, meal_name, description, cooking_guide) VALUES
-(1, 'Ikan masak merah', 'A rich and flavorful fish dish cooked in a red chili sauce.', ''),
-(2, 'Nasi Lemak', 'Traditional Malaysian dish with rice cooked in coconut milk, served with various accompaniments.', ''),
-(3, 'Ayam masak lemak cili api', 'A spicy and creamy chicken dish cooked with turmeric and coconut milk.', ''),
-(4, 'Kentang goreng', 'Crispy and golden French fries, a perfect snack or side dish.', ''),
-(5, 'Ayam panggang', 'Juicy and flavorful grilled chicken, seasoned to perfection.', ''),
-(6, 'Salmon mentai', 'Delicious salmon topped with creamy mentai sauce, broiled to perfection.', '');
+INSERT OR IGNORE INTO item_selections (id, item_name, item_name_malay) VALUES
+(1, 'Chicken', 'Ayam'),
+(2, 'Beef', 'Daging'),
+(3, 'Pasta', 'Pasta'),
+(4, 'Olive oil', 'Minyak zaitun'),
+(5, 'Cajun', 'Cajun'),
+(6, 'Onion', 'Bawang besar'),
+(7, 'Garlic', 'Bawang putih'),
+(8, 'Lime leaves', 'Daun limau purut'),
+(9, 'Birds eye chilli', 'Cili padi'),
+(10, 'Tomyam paste', 'Pes tomyam'),
+(11, 'Basil leaves', 'Daun basil'),
+(12, 'Cooking cream', 'Krim masakan'),
+(13, 'Butter', 'Mentega'),
+(14, 'Lemon water', 'Air lemon'),
+(15, 'Cheese', 'Keju'),
+(16, 'Salt', 'Garam'),
+(17, 'Sugar', 'Gula'),
+(18, 'Tomato', 'Tomato'),
+(19, 'Carrot', 'Lobak merah'),
+(20, 'Potato', 'Kentang'),
+(21, 'Rice', 'Beras'),
+(22, 'Chilli paste', 'Pes cili'),
+(23, 'Lemongrass', 'Serai'),
+(24, 'Coconut milk', 'Santan'),
+(25, 'Palm sugar', 'Gula melaka'),
+(26, 'Egg', 'Telur'),
+(27, 'Tamarind', 'Asam Jawa'),
+(28, 'Turmeric', 'Kunyit'),
+(29, 'Coriander', 'Ketumbar'),
+(30, 'Cumin', 'Jintan putih'),
+(31, 'Galangal', 'Lengkuas'),
+(32, 'Curry leaves', 'Daun kari'),
+(33, 'Pandan leaves', 'Daun pandan'),
+(34, 'Dried shrimp', 'Udang kering'),
+(35, 'Anchovy', 'Ikan bilis'),
+(36, 'Soy sauce', 'Kicap'),
+(37, 'Fish sauce', 'Sos ikan'),
+(38, 'Belacan', 'Belacan'),
+(39, 'Oyster sauce', 'Sos tiram'),
+(40, 'Shallot', 'Bawang merah'),
+(41, 'Star anise', 'Bunga lawang'),
+(42, 'Clove', 'Cengkih'),
+(43, 'Cinnamon', 'Kulit kayu manis'),
+(44, 'Cardamom', 'Buah pelaga'),
+(45, 'Nutmeg', 'Buah pala'),
+(46, 'Black pepper', 'Lada hitam'),
+(47, 'Tapioca flour', 'Tepung ubi kayu'),
+(48, 'Rice flour', 'Tepung beras'),
+(49, 'Tapioca pearls', 'Sagu'),
+(50, 'Bean sprouts', 'Taugeh'),
+(51, 'Chinese cabbage', 'Kubis cina'),
+(52, 'Long beans', 'Kacang panjang'),
+(53, 'Bok choy', 'Sawi'),
+(54, 'Water spinach', 'Kangkung'),
+(55, 'Ginger', 'Halia'),
+(56, 'Kaffir lime', 'Limau purut'),
+(57, 'Asam keping', 'Asam gelugor'),
+(58, 'Candlenut', 'Buah keras'),
+(59, 'Fenugreek', 'Halba'),
+(60, 'Chili sauce', 'Sos cili'),
+(61, 'Tomato sauce', 'Sos tomato'),
+(62, 'Banana leaf', 'Daun pisang'),
+(63, 'Cassava', 'Ubi kayu'),
+(64, 'Yam', 'Keladi'),
+(65, 'Tamarind paste', 'Pes asam jawa'),
+(66, 'Coconut oil', 'Minyak kelapa'),
+(67, 'Corn oil', 'Minyak jagung'),
+(68, 'Saffron', 'Safron'),
+(69, 'Tapioca starch', 'Kanji ubi kayu'),
+(70, 'Coriander seeds', 'Biji ketumbar'),
+(71, 'Fennel seeds', 'Biji jintan manis'),
+(72, 'Black sesame seeds', 'Biji bijan hitam'),
+(73, 'White sesame seeds', 'Biji bijan putih'),
+(74, 'Brown sugar', 'Gula perang'),
+(75, 'Rock sugar', 'Gula batu'),
+(76, 'Prawn', 'Udang'),
+(77, 'Squid', 'Sotong'),
+(78, 'Mussels', 'Kupang'),
+(79, 'Clams', 'Kerang'),
+(80, 'Ikan tenggiri', 'Mackerel'),
+(81, 'Ikan kembung', 'Indian mackerel'),
+(82, 'Ikan bawal', 'Pomfret'),
+(83, 'Ikan tongkol', 'Tuna'),
+(84, 'Dried anchovies', 'Ikan bilis kering'),
+(85, 'Ikan terubuk masin', 'Salted fish'),
+(86, 'Petai', 'Stink bean'),
+(87, 'Kacang botol', 'Winged bean'),
+(88, 'Tahu', 'Tofu'),
+(89, 'Tempeh', 'Tempeh'),
+(90, 'Serunding', 'Meat floss'),
+(91, 'Cili kering', 'Dried chili'),
+(92, 'Kicap manis', 'Sweet soy sauce'),
+(93, 'Hoisin sauce', 'Sos hoisin'),
+(94, 'Black bean sauce', 'Sos kacang hitam'),
+(95, 'Gula kabung', 'Palm sugar'),
+(96, 'Kacang tanah', 'Peanuts'),
+(97, 'Kacang hijau', 'Green beans'),
+(98, 'Kacang dal', 'Lentils'),
+(99, 'Tauhu kering', 'Dried tofu'),
+(100, 'Lengkuas powder', 'Galangal powder');
 
-INSERT OR IGNORE INTO meal_items (id, meal_id, item_selection_id, quantity, unit_id) VALUES
-(1, 1, 1, 1, 11),  
-(2, 1, 2, 3, 9),    
-(3, 2, 3, 2, 8),    
-(4, 2, 4, 4, 9),  
-(5, 2, 5, 3, 9),    
-(6, 2, 6, 2, 11),   
-(7, 3, 7, 1, 1),    
-(8, 3, 8, 2, 9),    
-(9, 3, 9, 2, 8), 
-(10, 4, 10, 3, 11),
-(11, 4, 11, 1, 10), 
-(12, 4, 12, 1, 8),   
-(13, 5, 7, 1, 1),    
-(14, 5, 13, 2, 9),   
-(15, 6, 14, 2, 11),  
-(16, 6, 15, 3, 9);   
+INSERT OR IGNORE INTO units (id, unit, unit_malay) VALUES
+(1, 'kg', 'kg'),
+(2, 'g', 'g'),
+(3, 'mg', 'mg'),
+(4, 'lb', 'paun'),
+(5, 'oz', 'auns'),
+(6, 'l', 'l'),
+(7, 'ml', 'ml'),
+(8, 'cup', 'cawan'),
+(9, 'tbsp', 'sudu besar'),
+(10, 'tsp', 'sudu kecil'),
+(11, 'piece', 'biji'),
+(12, 'serving', 'hidangan'),
+(13, 'slice', 'hiris'),
+(14, 'pinch', 'cubitan'),
+(15, 'dash', 'sejumput'),
+(16, 'quart', 'kuart'),
+(17, 'pint', 'pint'),
+(18, 'gallon', 'galon'),
+(19, 'cm', 'cm'),
+(20, 'inch', 'inci'),
+(21, 'm', 'm'),
+(22, 'mm', 'mm'),
+(23, 'km', 'km'),
+(24, 'yard', 'ela'),
+(25, 'foot', 'kaki'),
+(26, 'dozen', 'dozen'),
+(27, 'pack', 'pek'),
+(28, 'bunch', 'ikat'),
+(29, 'can', 'tin'),
+(30, 'bottle', 'botol'),
+(31, 'jar', 'balang'),
+(32, 'stick', 'batang'),
+(33, 'bar', 'bar'),
+(34, 'clove', 'ulas'),
+(35, 'head', 'kepala'),
+(36, 'fillet', 'filet'),
+(37, 'handful', 'genggam'),
+(38, 'sachet', 'sachet'),
+(39, 'tube', 'tiub'),
+(40, 'sprig', 'tangkai'),
+(41, 'leaf', 'helai'),
+(42, 'block', 'ketul'),
+(43, 'sheet', 'keping'),
+(44, 'packet', 'bungkusan'),
+(45, 'roll', 'gulung'),
+(46, 'drop', 'titis'),
+(47, 'gill', 'gelas kecil');
+
 `;
 
 // Export the database connection and utility functions
