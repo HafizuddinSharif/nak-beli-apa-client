@@ -88,7 +88,7 @@ export default function Meals() {
           }}
           numColumns={2}
           columnWrapperStyle={{ columnGap: 10 }}
-          keyExtractor={({ id }: MealSelection) => id}
+          keyExtractor={({ id }: MealSelection) => id.toString()}
           ItemSeparatorComponent={() => <View style={{ height: 10 }}></View>}
         />
       )}
