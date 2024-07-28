@@ -97,7 +97,7 @@ export default function EditMealPage() {
       DB.updateMeal(db, updatedMeal);
     }
 
-    router.push(`/meals`);
+    router.navigate(`/view-meal/${meal.id ? meal.id : mealList.length + 1}`);
   };
 
   return (
