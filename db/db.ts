@@ -84,7 +84,7 @@ const getAllMealSelectionTable = async (
     "SELECT * from meal_selections;"
   );
   const mealItems: (MealItemDAO & { unit_id: number; unit: string })[] =
-    await db.getAllAsync(`SELECT mi.meal_id, mi.item_selection_id, mi.quantity, u.id as unit_id, u.unit
+    await db.getAllAsync(`SELECT mi.rowid, mi.meal_id, mi.item_selection_id, mi.quantity, u.id as unit_id, u.unit
             FROM meal_items mi
             JOIN units u ON mi.unit_id = u.id;`);
 
@@ -99,7 +99,7 @@ const getAllMealSelectionTable = async (
       );
       const foundUnitDAO = units.find((y) => y.id === item.unit_id) as Unit;
       const itemToAdd: ItemForMeal = {
-        id: item.id,
+        id: item.rowid,
         item_selection_id: yesh,
         quantity: item.quantity,
         unit: foundUnitDAO,
@@ -134,10 +134,6 @@ const insertNewMeal = async (db: SQLiteDatabase, newMeal: MealSelection) => {
     );
     console.log(savedMeal.lastInsertRowId, savedMeal.changes);
     const prepMealItemsSQLScript = [];
-
-    const getMealItemsLength: any = await db.getAllAsync(
-      `SELECT COUNT(*) FROM meal_items;`
-    );
     item_list.forEach((item) => {
       const scriptLine = `(${savedMeal.lastInsertRowId}, ${item.item_selection_id.id}, ${item.quantity}, ${item.unit.id})`;
       prepMealItemsSQLScript.push(scriptLine);
@@ -153,7 +149,33 @@ const insertNewMeal = async (db: SQLiteDatabase, newMeal: MealSelection) => {
   // console.log("🍟", rs2);
 };
 
-const updateMeal = async (db, meal: MealSelection) => {};
+const updateMeal = async (db, meal: MealSelection) => {
+  console.log("Updating meal in DB:", meal.meal_name);
+  const { id, meal_name, description, cooking_guide, item_list } = meal;
+  // Start a transaction so if error happen we can rollback
+  await db.withTransactionAsync(async () => {
+    const savedMeal = await db.runAsync(
+      `UPDATE meal_selections
+      SET meal_name = ?, description = ?, cooking_guide = ?
+      WHERE id = ?;`,
+      meal_name,
+      description,
+      cooking_guide,
+      id
+    );
+    console.log(savedMeal.lastInsertRowId, savedMeal.changes);
+    await db.runAsync(`DELETE FROM meal_items WHERE meal_id = ${id}`);
+    const prepMealItemsSQLScript = [];
+    item_list.forEach((item) => {
+      const scriptLine = `(${id}, ${item.item_selection_id.id}, ${item.quantity}, ${item.unit.id})`;
+      prepMealItemsSQLScript.push(scriptLine);
+    });
+    const runScript = `INSERT INTO meal_items (meal_id, item_selection_id, quantity, unit_id) VALUES ${prepMealItemsSQLScript.join(
+      ","
+    )};`;
+    await db.runAsync(runScript);
+  });
+};
 
 const insertIntoUnits = async (db, unitName) => {
   await db.runAsync(`INSERT INTO units (unit) VALUES (?)`, unitName);

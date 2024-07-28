@@ -70,7 +70,6 @@ const AddNewIngredient = ({
   };
 
   const onChangeItem = (itemIdValue: string) => {
-    setItemUnit(null);
     const itemObj = itemList.find(
       (elem) => elem.id === parseInt(itemIdValue)
     ) as ItemSelection;

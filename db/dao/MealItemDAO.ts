@@ -1,5 +1,5 @@
 interface MealItemDAO {
-  id: number;
+  rowid: number;
   meal_id: number;
   item_selection_id: number;
   quantity: number;
