@@ -36,10 +36,12 @@ export default function EditMealPage() {
       : [dummyAddNewItemForMeal(meal?.id, currCount)]
   );
   const [modalVisible, setModalVisible] = useState(false);
+  const [isEdited, setIsEdited] = useState(false);
 
   const router = useRouter();
 
   const onAddNew = () => {
+    setIsEdited(true);
     setCurrCount((prev) => prev + 1);
     const newEntry = dummyAddNewItemForMeal(meal.id, currCount + 1);
     setIngredientList((prev) => {
@@ -53,6 +55,7 @@ export default function EditMealPage() {
   };
 
   const onEditItem = (editItem: ItemForMeal) => {
+    setIsEdited(true);
     setIngredientList((prev) => {
       const newList = [...prev];
       const toEdit = newList.find((item) => item.id == editItem.id);
@@ -64,6 +67,7 @@ export default function EditMealPage() {
   };
 
   const onRemoveItem = (id: string) => {
+    setIsEdited(true);
     setIngredientList((prev) => {
       const updatedList = [...prev];
       return updatedList.filter((item) => item.id !== id);
@@ -115,7 +119,9 @@ export default function EditMealPage() {
           headerTitle: "",
           headerBackTitle: "Balik ke menu",
           headerLeft: () => (
-            <TouchableOpacity onPress={() => setModalVisible(true)}>
+            <TouchableOpacity
+              onPress={() => (isEdited ? setModalVisible(true) : router.back())}
+            >
               <Ionicons
                 name="arrow-back"
                 size={30}
@@ -151,7 +157,13 @@ export default function EditMealPage() {
         }}
       >
         {/* Page title */}
-        <PageTitle title={TEXT.ADD_NEW_MEAL.TITLE.BM} />
+        <PageTitle
+          title={
+            params.id === "new"
+              ? TEXT.ADD_NEW_MEAL.TITLE.BM
+              : TEXT.ADD_NEW_MEAL.TITLE_EDIT.BM
+          }
+        />
 
         {/* Menu name input */}
         <TextInput
